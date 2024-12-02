@@ -1,0 +1,36 @@
+
+<html>
+    <head>
+        <link rel="stylesheet" href="http://192.168.43.40/kwbot/realtime/added/bootstrap/css/bootstrap.min.css">
+        <script src="http://192.168.43.40/kwbot/realtime/added/socket.io-client/dist/socket.io.js"></script>
+    </head>
+<body>
+<script src="http://192.168.43.40/kwbot/realtime/added/jquery.js"></script>
+    
+    
+<!-- Button trigger modal -->
+<button type="button" id="exampleModalformnameSAVE" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="LAUNCH_THEE">
+  Notify
+</button>
+  
+    <h1>{{ port }} </h1>
+
+<script>
+  var socket = io.connect('http://192.168.43.40:8080');
+  let showingStaff = true;
+  socket.on('connect', function (data) {
+    socket.emit('join', 'Browser administration connected...');
+  });
+</script>
+
+
+
+<script>
+    $("#exampleModalformnameSAVE").click( function(exampleModalformname){
+        exampleModalformname.preventDefault();
+        socket.emit("notifyPhone","notifications...");
+        console.log("notifications...");
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+
+<script>
+
+  var socket = io.connect('http://192.168.1.77:8080');
+  let showingStaff = true;
+  socket.on('connect', function (data) {
+    socket.emit('join', 'Browser administration connected...');
+  });
+    
+   socket.on("the_PathSaverIndex", function(msg){
+            if(showingStaff){
+                $("#LAUNCH_THEE").click();
+                showingStaff = false;
+            }
+   });
+  
+  socket.on("notify", function(msg){
+      var Type = "info";
+      if(msg.type==0)
+          Type = "danger";
+      $.notify({
+            // options
+            message: msg.cont 
+        },{
+            // settings
+            type: Type
+        });
+      $("#NOTIFYS_ALL_DEVICES_ACTS").load("functions/SOP/php/notify.php");
+  })
+    
+        
+        function nameAconv(convId,Text){
+            var canvas = document.getElementById(convId);
+            context = canvas.getContext('2d');
+            //context.clearRect(context.width,context.height,context.width,context.height);
+            context.font = '38pt Arial';
+            context.fillStyle = 'cornflowerblue';
+            context.strokeStyle = 'blue';
+            context.fillText(Text,canvas.width/2 - 150,canvas.height/2 + 15);
+            context.strokeText(Text,canvas.width/2 - 150,canvas.height/2 + 15 ); 
+        }
+        
+        function windowToCanvas(canvas, x, y) {
+            var bbox = canvas.getBoundingClientRect();
+            return { x: x - bbox.left * (canvas.width / bbox.width),
+             y: y - bbox.top * (canvas.height / bbox.height)
+            };
+        }
+        var canvas = document.getElementById("path_drawer");
+        
+        var data_point = {
+                x:canvas.width/2,
+                y:canvas.height/2
+        }
+        canvas.addEventListener('mousedown', function (e) {
+             var context = canvas.getContext('2d');
+             canvas.addEventListener('mousemove', function(ee){
+                    var loc = windowToCanvas(canvas, ee.clientX, ee.clientY);
+                     context.strokeStyle = "#f8d523";
+                     context.lineWidth = 5;
+                     context.lineCap = 'square';
+                     context.beginPath();
+                     context.moveTo(loc.x, loc.y);
+                     context.lineTo(loc.x,loc.y);
+                     context.stroke();
+                     context.closePath();
+             })
+            canvas.addEventListener('mouseup', function(e){
+                canvas.removeEventListener('mousemove');
+            })
+        });
+        
+        function putApoint(da){
+            var context = canvas.getContext('2d');
+            context.strokeStyle = "#f8d523";
+            context.lineWidth = 5;
+            context.lineCap = 'square';
+            context.beginPath();
+            context.moveTo(da.x, da.y);
+            context.lineTo(da.x,da.y);
+            context.stroke();
+            context.closePath();
+        }
+        function moveCanvas(data_turn){
+            switch(data_turn){
+                    case "up-left":{
+                        data_point.x = data_point.x-1;
+                        data_point.y = data_point.y-1;
+                        break;
+                    }
+                    case "up":{
+                        data_point.y = data_point.y-1;
+                        break;
+                    }
+                    case "up-right":{
+                        data_point.x = data_point.x+1;
+                        data_point.y = data_point.y-1;
+                        break;
+                    }
+                    case "left":{
+                        data_point.x = data_point.x-1;
+                        break;
+                    }
+                    case "void":{
+                        
+                        break;
+                    }
+                    case "right":{
+                        data_point.x = data_point.x+1;
+                        break;
+                    }
+                    case "bottom-left":{
+                        data_point.x = data_point.x-1;
+                        data_point.y = data_point.y+1;
+                        break;
+                    }
+                    case "bottom":{
+                        data_point.y = data_point.y+1;
+                        break;
+                    }
+                    case "bottom-right":{
+                        data_point.x = data_point.x+1;
+                        data_point.y = data_point.y+1;
+                        break;
+                    }
+            }
+            if(!(currentPath===-100))
+                eval("PATH_THIS"+currentPath+'.push({"x":'+data_point.x+',"y":'+data_point.y+'})');
+            putApoint(data_point);
+        }
+        function loadPath(da){
+            for(var ii=0;ii<da.length;ii++){
+                putApoint(da[ii]);
+            }
+        }
+    
+        function strCommand(da){
+            var strs = "";
+            if(parseInt(da[0].y)<150){
+                if(parseInt(da[0].x>250)){
+                   strs = "up-right";
+                } else if(parseInt(da[0].x<250)){
+                   strs = "up-left";
+                } else {
+                   strs = "up";
+                }
+            } else if(parseInt(da[0].y)>150){
+                if(parseInt(da[0].x>250)){
+                   strs = "bottom-right";
+                } else if(parseInt(da[0].x<250)){
+                   strs = "bottom-left";
+                } else {
+                   strs = "bottom";
+                }
+            } else if(parseInt(da[0].x)>250){
+                strs = "right";
+            } else if(parseInt(da[0].x)<250){
+                strs = "left";
+            } else {
+               strs = "void"; 
+            }
+            
+            var prev = {
+                "x":da[0].x,
+                "y":da[0].y
+            }
+            for(var ii=1;ii<da.length;ii++){
+                strs = strs + "<";
+                if(parseInt(da[ii].y)<prev.y){
+                    if(parseInt(da[ii].x>prev.x)){
+                       strs += "up-right";
+                    } else if(parseInt(da[ii].x<prev.x)){
+                       strs += "up-left";
+                    } else {
+                       strs += "up";
+                    }
+                } else if(parseInt(da[ii].y)>prev.y){
+                    if(parseInt(da[ii].x>prev.x)){
+                       strs += "bottom-right";
+                    } else if(parseInt(da[ii].x<prev.x)){
+                       strs += "bottom-left";
+                    } else {
+                       strs += "bottom";
+                    }
+                } else if(parseInt(da[ii].x)>prev.x){
+                    strs += "right";
+                } else if(parseInt(da[ii].x)<prev.x){
+                    strs += "left";
+                } else {
+                   strs += "void"; 
+                }
+                
+                prev.x = da[ii].x;
+                prev.y = da[ii].y;
+            }
+            return strs;
+        }
+        
+        $(".control-vehicle").click( function(control_vehicle){
+            control_vehicle.preventDefault();
+            var data_turn = $(this).attr("data-turn");
+            //socket.emit("turn",{"direction":data_turn});
+            socket.emit("turn",{"direction":data_turn,"point":data_point});
+        });
+    
+        socket.on("turn", function(msg){
+                moveCanvas(msg.direction);
+        });
+    
+    function rotate(dir){
+        socket.emit("rotate",dir);
+    }
+    
+    function stop(){
+        socket.emit("joyStickStop","");
+    }
+    
+    function go(time){
+        var msg = {
+            "xval":-5,
+            "yval":0
+        }
+        socket.emit("accelomets",msg);
+        setTimeout( function(){
+            stop();
+        },time*1000);
+    }
+    
+    function back(time){
+        var msg = {
+            "xval":5,
+            "yval":0
+        }
+        socket.emit("accelomets",msg);
+        setTimeout( function(){
+            stop();
+        },time*1000);
+    }
+    
+    function speed(speeds){
+        socket.emit("speed",speeds);
+    }
+</script>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="LAUNCH_THEE" style="display: none">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Save the path </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <form>
+                <input type="text" name="thename" class="form-control" id="exampleModalformname">
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="exampleModalformnameSAVE">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    $("#exampleModalformnameSAVE").click( function(exampleModalformname){
+        exampleModalformname.preventDefault();
+        
+        socket.emit("savePathText",$("#exampleModalformname").val());
+    })
+</script>

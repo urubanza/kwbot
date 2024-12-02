@@ -1,0 +1,22 @@
+{
+  "name": "kwrobot",
+  "version": "1.0.0",
+  "description": "this is a prototype of kwrobot project where we will continue to improve the project as a team",
+  "main": "kwrobot.js",
+  "scripts": {
+    "test": "kwrobotest"
+  },
+  "keywords": [
+    "kwrobotkey"
+  ],
+  "author": "Paci ISHIMWE",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.6",
+    "express": "^4.16.2",
+    "jquery": "^3.3.1",
+    "mysql": "^2.17.1",
+    "socket.io": "^2.4.1"
+  }
+}
