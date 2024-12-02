@@ -1,21 +1,12 @@
 <?php
- /* 
- file has been composed by Pacifique Ishimwe a.k.a PIP for commercial and serious issue
-    please check lisence before using this. copyright PIP allright reserved.
-    ################################################################################################################
-  PIP is an application software development libray available for Core PHP/MySql, Core Javascript( DOM for web application) & Core Javascript ( Node for Serverside fullduplexed com. server), x86 & x64 assembly with C/C++ and python, Objective C/Swift( for IOS applications ) ,Java/Kotlin for android applications, CLI/C# .NET for Windows.
-  And is for those who need to create great and innovative system and application softwares  designed for IoT, Artificial intergence, blockchain applications and many more advanced engeenering software both application and system softwares.
-**/
 if(session_status() == PHP_SESSION_NONE){
     session_start();
 }
-//require_once "classes/rootConfig.php";
 interface systemUpdate{
     function onUpdate();
     function onUpGrade();
     function onDownGrade();
 }
-// a class to keep constants of the root server
 class rootConfig {
     private $ROOT = [
         "SERVER"=>"",
