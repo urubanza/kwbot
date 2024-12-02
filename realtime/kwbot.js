@@ -147,9 +147,20 @@ io.on('connection', function (client) {
 	
 	client.on("join", function(){
 		console.log("the browser is connected ");
+
+        var AreaChartData = {
+            'labels':["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            'data':[15000, 10000, 4000, 2000, 1000, 20000, 5000, 2100, 2200, 30000, 5500, 4000]
+        };
+
+        var pieChartData = {
+            'labels':["Transport", "Multimedi", "Inactive"],
+            'data':[55, 30, 15]
+        };
+
         sendUiData({
-            "id":"GSHDJSD",
-            "value":78
+            "AreaChartData":AreaChartData,
+            "pieChartData":pieChartData
         }, io);
 	});
     

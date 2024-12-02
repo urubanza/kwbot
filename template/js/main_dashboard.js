@@ -96,7 +96,7 @@ function plotArea(date,numbers){
             padding: 10,
             // Include a dollar sign in the ticks
             callback: function(value, index, values) {
-                return ' Km ' + number_format(value);
+                return ' Con. ' + number_format(value);
             }
             },
             gridLines: {

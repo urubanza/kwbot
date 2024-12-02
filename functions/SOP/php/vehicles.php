@@ -4,7 +4,7 @@
     $all_vehicles_type = $vehicles_type->_gets_();
     $all_robots_type = $robots_type->_gets_();
 
-    $actives = 0;
+    $actives = 2;
     if(http("active")->set()){
         $actives = http("active")->val();
         //echo "why this shit are set to $active and i can't find any solution to this problem";
@@ -114,9 +114,9 @@
                                     
                                     while($all_robots_type->next()){
                                 ?>
-                                <option value="<?php $all_robots_type->printi() ?>">
-                                    <?php $all_robots_type->printi("name") ?>
-                                </option>
+                                    <option value="<?php $all_robots_type->printi() ?>">
+                                        <?php $all_robots_type->printi("name") ?>
+                                    </option>
                                 <?php
                                     }
                                 ?>

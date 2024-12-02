@@ -7,13 +7,12 @@
     socket.emit('join', 'Browser administration connected...');
   });
 
-  socket.on("ui_updates", function(data){
-    var labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var data =  [15000, 10000, 4000, 2000, 1000, 20000, 5000, 2100, 2200, 30000, 5500, 4000];
-    plotArea(labels,data);
-    plotPie(["Transport", "Multimedi", "Inactive"], [55, 30, 15]);
+  socket.on("ui_updates", function(ChartData){
+    plotArea(ChartData.AreaChartData.labels,ChartData.AreaChartData.data);
+    plotPie(ChartData.pieChartData.labels,ChartData.pieChartData.data);
     // alert(data);
-    // console.log(data);
+    // console.log(ChartData.AreaChartData.labels);
+    // console.log(ChartData.pieChartData.data);
   });
     
    socket.on("the_PathSaverIndex", function(msg){
