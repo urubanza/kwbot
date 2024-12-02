@@ -25,6 +25,7 @@ app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/admin.html');
 });
 
+
 var message = {
        "cont":"",
        "type":0,
@@ -88,6 +89,13 @@ var savedPath = {
     "speed":""
 }
 var allPath = [];
+
+
+function sendUiData(data, io, id = null){
+    io.sockets.emit("ui_updates",data);
+}
+
+
 io.on('connection', function (client) {
     console.log('Client  with '+client.id+' id connected successfull');
     
@@ -139,6 +147,10 @@ io.on('connection', function (client) {
 	
 	client.on("join", function(){
 		console.log("the browser is connected ");
+        sendUiData({
+            "id":"GSHDJSD",
+            "value":78
+        }, io);
 	});
     
     client.on("disconection", function(){
