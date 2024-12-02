@@ -1,0 +1,36 @@
+<html>
+    <head>
+      <title>
+          test forms
+        </title>
+        <script type="application/javascript" src="functions.js"></script>
+    </head>
+    <body>
+        <div id="TESTING_THEE">
+            
+        </div>
+    </body>
+    <script>
+        var format = {
+            method: "POST",
+            action: "",
+            Class: "myForm AnewForm",
+            id:"MyForm",
+            name: "MyForm"
+        }
+        
+        Pform("#TESTING_THEE",format)
+            .EMAIL({
+                name:"email"})
+            .SUBMIT({
+                value:"send",
+                id:"send_exp",
+                Class:"btn btn-info",
+                name:"sbt_btn"})
+            .RESET({
+                value:"Reset",
+                id:"canc",
+                Class:"btn btn-info",
+                name:"can_btn"});
+    </script>
+</html>

@@ -1,0 +1,88 @@
+<style>
+    #the_map_convas{
+        width: 1000px;
+        height: 500px;
+    }
+</style>
+<div class="col-md-12">
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+        <div class="container"><a class="navbar-brand" href="#">
+                <pip::template::variables>
+                      path_name
+                </pip::template::variables>
+            </a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+<!--
+                <ul class="nav navbar-nav mr-auto">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#">First Item</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="#">Second Item</a></li>
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Dropdown </a>
+                        <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">First Item</a><a class="dropdown-item" role="presentation" href="#">Second Item</a><a class="dropdown-item" role="presentation" href="#">Third Item</a></div>
+                    </li>
+                </ul>
+-->
+                <span class="navbar-text actions">
+                    <a class="btn btn-info btn-sm action-button" id="thePlayButton" style="color: #fff" role="button" href="#">
+                        <i class="fa fa-play"></i>
+                        Play
+                    </a>
+                    <a class="btn btn-success btn-sm action-button" id="TheClearButton" style="color: #fff" role="button" href="#">
+                        <i class="fa fa-eraser"></i>
+                        Clear
+                    </a>
+                    <a class="btn btn-danger btn-sm action-button" style="color: #fff" role="button" href="#">
+                        <i class="fa fa-arrow-circle-right"></i>
+                        Back
+                    </a>
+                </span>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="col-md-12" style="background-color: #fff;box-shadow: 0 0 10px rgba(50,50,50,.4); border-radius: 10px; padding: 10px;">
+    <canvas id="the_map_convas" width="1000" height="500">
+        
+    </canvas>
+</div>
+<script src="template/js/kwbot/path.js"></script>
+<pip::template::variables>
+    path_codes
+</pip::template::variables>
+<script>
+    //console.log(path_codes.angle());
+    
+    var theMap = new map("the_map_convas");
+    theMap.load(path_codes);
+    $("#TheClearButton").click( function(TheClearButton){
+        TheClearButton.preventDefault();
+        theMap.clear();
+    });
+    
+    $("#thePlayButton").click( function(thePlayButton){
+        thePlayButton.preventDefault();
+        //theMap.clear();
+        theMap.load(path_codes);
+    });
+    
+    theMap.read( function(obj){
+        var arrs = obj.rgb();
+        var x = -25;
+        var y = -25;
+        for(var i =0; i < arrs.length; i++){
+            for(var ii = 0; ii < arrs[i].length; ii++){
+                if(!obj.transparent(arrs[i][ii])){
+                    obj
+                      .color(`rgb(${arrs[i][ii][2]},${arrs[i][ii][1]},${arrs[i][ii][0]})`)
+                      .point(x,y,2);
+                }
+                
+                x++;
+            }
+            x = 0;
+            y++;
+        }
+    })
+    
+</script>
+

@@ -1,0 +1,21 @@
+<script src="{{locs}}plugins/jquery/jquery.min.js"></script>
+<script src="{{locs}}plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{{locs}}dist/js/adminlte.min.js"></script>
+<script src="{{locs}}plugins/summernote/summernote-bs4.min.js"></script>
+<script src="{{locs}}plugins/codemirror/codemirror.js"></script>
+<script src="{{locs}}plugins/codemirror/mode/css/css.js"></script>
+<script src="{{locs}}plugins/codemirror/mode/xml/xml.js"></script>
+<script src="{{locs}}plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="{{locs}}dist/js/demo.js"></script>
+<script>
+  $(function () {
+    // Summernote
+    $('#summernote').summernote()
+
+    // CodeMirror
+    CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
+      mode: "htmlmixed",
+      theme: "monokai"
+    });
+  })
+</script>

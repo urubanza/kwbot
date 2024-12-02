@@ -1,0 +1,39 @@
+
+.editor-popup {
+    position:absolute;
+    z-index:2000;
+    background-color:#fff;
+    border-radius:10px;
+    box-shadow:0 0 20px #000;
+    padding:10px;
+}
+
+.pip-btn {
+    background-color: rgba(0,0,0,0);
+    border: 0;
+}
+
+.danger-popup {
+    width:200px; 
+    height: 100px; 
+    background:linear-gradient(#e81062, #e83d81,#e81062); 
+    box-shadow: 0 0 10px #e81062;
+    position: absolute; 
+    z-index: 2000;
+    transition: all 0.5s;
+}
+/*  the styling that will define the appearence of components controller */
+.hidden-control {
+    position: relative;
+    top: 100px;
+    transition: all 0.2s;
+}
+
+.hidden-control-parent {
+    overflow: hidden;
+}
+
+.hidden-control-parent:hover .hidden-control {
+    top: 0px;
+}
+
