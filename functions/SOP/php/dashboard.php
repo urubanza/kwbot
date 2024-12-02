@@ -43,7 +43,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Carried weight </div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Total Robots </div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800"> 50 kg </div>
                     </div>
                     <div class="col-auto">
@@ -60,7 +60,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Distance </div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1"> Active Robots </div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800"> 50 km </div>
                     </div>
                     <div class="col-auto">
@@ -77,7 +77,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1"> Active robots </div>
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1"> Number of Companies </div>
                       <div class="row no-gutters align-items-center">
                         <div class="col-auto">
                           <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">70%</div>
@@ -103,7 +103,7 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"> Issues </div>
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"> Support Request </div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
                     </div>
                     <div class="col-auto">
