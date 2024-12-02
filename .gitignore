@@ -1,6 +1,6 @@
 # Ignore node_modules folder
 **/node_modules/
-/realtime/admin.html
+*. realtime/admin.html
 
 # Ignore log files
 *.log
