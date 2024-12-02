@@ -1,0 +1,50 @@
+<footer>
+<div id="dispdisprealTime"></div>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/demo/chart-area-demo.js"></script>
+  <script src="js/demo/chart-pie-demo.js"></script>
+  <script type="text/javascript" src="socket.io-client/dist/socket.io.js"></script>
+  <script type="text/javascript" src="js/bootstrap-notify/bootstrap-notify.min.js"></script>
+  <script type="text/javascript" src="plugins/prism/prism.js"></script>
+  <script type="text/javascript" src="plugins/fancybox/fancybox.min.js"></script>
+  
+  
+  <script>
+    $("#KWBOT_ALL_CONTAINER")
+        .html(LOADING_S_)
+        .load("functions/SOP/php/dashboard.php");
+      
+    $(".KWBOT_ALL_CONTAINER_NAV").click( function(vb){
+        vb.preventDefault();
+        let file = $(this).attr("kwbot-nav");
+        $("#KWBOT_ALL_CONTAINER")
+            .html(LOADING_S_)
+            .load("functions/SOP/php/"+file+".php");
+    });
+  </script>
+  
+  <script>
+        $.get("../realKwbot",
+              "vb=nm",
+              function(cv){
+            $("#dispdisprealTime").html(cv);
+        });
+        $("#NOTIFYS_ALL_DEVICES_ACTS").load("functions/SOP/php/notify.php");
+    </script>
+    <!--
+      <a href="jsd"></a>
+      <a href="jsd"></a>
+      <a href="jsd"></a>
+    -->
+</footer>
