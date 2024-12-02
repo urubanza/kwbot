@@ -1,0 +1,1 @@
+<tr><td>vehicles_id</td><td>INT</td><td>11</td><td>vehicles_id</td><td></td><td>11</td></tr><tr><td>name</td><td>VARCHAR</td><td>20</td><td>name</td><td></td><td>20</td></tr><tr><td>serial</td><td>VARCHAR</td><td>100</td><td>serial</td><td></td><td>100</td></tr><tr><td>vehicles_type_id</td><td>INT</td><td>11</td><td>vehicles_type_id</td><td></td><td>11</td></tr>
