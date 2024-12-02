@@ -8,15 +8,19 @@
   });
 
   socket.on("ui_updates", function(data){
-    //alert(data);
-    console.log(data);
+    var labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var data =  [15000, 10000, 4000, 2000, 1000, 20000, 5000, 2100, 2200, 30000, 5500, 4000];
+    plotArea(labels,data);
+    plotPie(["Transport", "Multimedi", "Inactive"], [55, 30, 15]);
+    // alert(data);
+    // console.log(data);
   });
     
    socket.on("the_PathSaverIndex", function(msg){
-            if(showingStaff){
-                $("#LAUNCH_THEE").click();
-                showingStaff = false;
-            }
+        if(showingStaff){
+            $("#LAUNCH_THEE").click();
+            showingStaff = false;
+        }
    });
   
   socket.on("notify", function(msg){
@@ -33,7 +37,6 @@
       $("#NOTIFYS_ALL_DEVICES_ACTS").load("functions/SOP/php/notify.php");
   })
     
- 
         function nameAconv(convId,Text){
             var canvas = document.getElementById(convId);
             context = canvas.getContext('2d');
@@ -43,8 +46,7 @@
             context.strokeStyle = 'blue';
             context.fillText(Text,canvas.width/2 - 150,canvas.height/2 + 15);
             context.strokeText(Text,canvas.width/2 - 150,canvas.height/2 + 15 ); 
-        }
-        
+        }    
         function windowToCanvas(canvas, x, y) {
             var bbox = canvas.getBoundingClientRect();
             return { x: x - bbox.left * (canvas.width / bbox.width),
@@ -52,7 +54,6 @@
             };
         }
         var canvas = document.getElementById("path_drawer");
-        
         var data_point = {
                 x:canvas.width/2,
                 y:canvas.height/2
@@ -74,7 +75,6 @@
                 canvas.removeEventListener('mousemove');
             })
         });
-        
         function putApoint(da){
             var context = canvas.getContext('2d');
             context.strokeStyle = "#f8d523";
@@ -138,7 +138,6 @@
                 putApoint(da[ii]);
             }
         }
-    
         function strCommand(da){
             var strs = "";
             if(parseInt(da[0].y)<150){
@@ -200,27 +199,21 @@
             }
             return strs;
         }
-        
         $(".control-vehicle").click( function(control_vehicle){
             control_vehicle.preventDefault();
             var data_turn = $(this).attr("data-turn");
             //socket.emit("turn",{"direction":data_turn});
             socket.emit("turn",{"direction":data_turn,"point":data_point});
         });
-    
         socket.on("turn", function(msg){
                 moveCanvas(msg.direction);
         });
-    
     function rotate(dir){
         socket.emit("rotate",dir);
     }
-    
     function stop(){
         socket.emit("joyStickStop","");
     }
-    
-    
     function go(time){
         console.log("moving Robots");
         var msg = {
@@ -233,7 +226,6 @@
             stop();
         },time*1000);
     }
-    
     function back(time){
         var msg = {
             "xval":5,
@@ -244,11 +236,9 @@
             stop();
         },time*1000);
     }
-    
     function speed(speeds){
         socket.emit("speed",speeds);
     }
-
 </script>
 
 <!-- Button trigger modal -->
