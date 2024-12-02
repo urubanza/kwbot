@@ -1,10 +1,15 @@
-
+<script src="realtime_client/realtime_events.js"></script>
 <script>
 
   var socket = io.connect('http://192.168.1.77:8080');
   let showingStaff = true;
   socket.on('connect', function (data) {
     socket.emit('join', 'Browser administration connected...');
+  });
+
+  socket.on("ui_updates", function(data){
+    //alert(data);
+    console.log(data);
   });
     
    socket.on("the_PathSaverIndex", function(msg){
@@ -28,7 +33,7 @@
       $("#NOTIFYS_ALL_DEVICES_ACTS").load("functions/SOP/php/notify.php");
   })
     
-        
+ 
         function nameAconv(convId,Text){
             var canvas = document.getElementById(convId);
             context = canvas.getContext('2d');
@@ -215,10 +220,13 @@
         socket.emit("joyStickStop","");
     }
     
+    
     function go(time){
+        console.log("moving Robots");
         var msg = {
             "xval":-5,
-            "yval":0
+            "yval":0,
+            "direction":"up"
         }
         socket.emit("accelomets",msg);
         setTimeout( function(){
@@ -240,6 +248,7 @@
     function speed(speeds){
         socket.emit("speed",speeds);
     }
+
 </script>
 
 <!-- Button trigger modal -->
@@ -273,7 +282,6 @@
 <script>
     $("#exampleModalformnameSAVE").click( function(exampleModalformname){
         exampleModalformname.preventDefault();
-        
         socket.emit("savePathText",$("#exampleModalformname").val());
     })
 </script>

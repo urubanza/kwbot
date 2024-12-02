@@ -18,7 +18,7 @@ var previous_angle = 0;
 
 let current_receiving = false;
 
-app.use(express.static(__dirname + '/client'));
+app.use(express.static(__dirname + '../realtime_client'));
 
 app.get('/', function (req, res, next) {
   console.log(req.params)

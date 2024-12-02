@@ -18,28 +18,22 @@
   <script type="text/javascript" src="js/bootstrap-notify/bootstrap-notify.min.js"></script>
   <script type="text/javascript" src="plugins/prism/prism.js"></script>
   <script type="text/javascript" src="plugins/fancybox/fancybox.min.js"></script>
+
+  <script src="js/main_dashboard.js"></script>
   
   
   <script>
-    $("#KWBOT_ALL_CONTAINER")
-        .html(LOADING_S_)
-        .load("functions/SOP/php/dashboard.php");
-      
+
+    navigateTo("dashboard");
     $(".KWBOT_ALL_CONTAINER_NAV").click( function(vb){
         vb.preventDefault();
         let file = $(this).attr("kwbot-nav");
-        $("#KWBOT_ALL_CONTAINER")
-            .html(LOADING_S_)
-            .load("functions/SOP/php/"+file+".php");
+        navigateTo(file);
     });
   </script>
   
   <script>
-        $.get("../realKwbot",
-              "vb=nm",
-              function(cv){
-            $("#dispdisprealTime").html(cv);
-        });
+        connectMain();
         $("#NOTIFYS_ALL_DEVICES_ACTS").load("functions/SOP/php/notify.php");
     </script>
     <!--
