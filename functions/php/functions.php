@@ -1,12 +1,4 @@
 <?php
- /* 
- file has been composed by Pacifique Ishimwe a.k.a PIP for commercial and serious issue
-    please check lisence before using this. copyright PIP allright reserved.
-    ################################################################################################################
-  PIP is an application software development libray available for Core PHP/MySql, Core Javascript( DOM for web application) & Core Javascript ( Node for Serverside fullduplexed com. server), x86 & x64 assembly with C/C++ and python, Objective C/Swift( for IOS applications ) ,Java/Kotlin for android applications, CLI/C# .NET for Windows.
-  And is for those who need to create great and innovative system and application softwares  designed for IoT, Artificial intergence, blockchain applications and many more advanced engeenering software both application and system softwares.
-**/
-// the definition of root server and root database server because the app can be hosted on different web and database server
 $the_root = new rootConfig();
 
 $the_root
