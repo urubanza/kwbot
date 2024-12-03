@@ -97,10 +97,11 @@ void setup() {
 }
 
 void loop(){
-    Kwbot.speed(2).turnLeft();
-    delay(2000);
-    Kwbot.speed(2).turnRight();
-    delay(2000);
+      pathTemplate();
+//    Kwbot.speed(2).turnLeft();
+//    delay(2000);
+//    Kwbot.speed(2).turnRight();
+//    delay(2000);
 }
  /*##############################################################################################################
  *  // grobal function to convert from string to char pointer
