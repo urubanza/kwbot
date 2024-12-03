@@ -96,8 +96,13 @@ void setup() {
      ###############################################################################################################*/
 }
 
+int speedxx = 0;
 void loop(){
-      pathTemplate();
+      Kwbot.speed(0.01*speedxx);
+      Kwbot.forward();
+      speedxx++;
+      if(speedxx==200) speedxx = 0;
+      //pathTemplate();
 //    Kwbot.speed(2).turnLeft();
 //    delay(2000);
 //    Kwbot.speed(2).turnRight();
