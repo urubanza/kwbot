@@ -26,7 +26,7 @@ void setup() {
      ###############################################################################################################*/
         //wifiCreate();
         //wifiConnect();
-        connecting("Didy Cub","Didy1234");
+        connecting("CANALBOX-350A","VpT4bsxuhs");
      /*##############################################################################################################
      *  // end of network connectivity
      ###############################################################################################################*/
@@ -97,13 +97,10 @@ void setup() {
 }
 
 void loop(){
-//  Kwbot.speed(1.3).hindukira(true);
-//  delay(1000);
-//  Kwbot.speed(1.3).hindukira(false);
-//  delay(1000);
-    currentTime = millis();
-    socket.loop();
-    //pathTemplate();
+    //Kwbot.speed(1.3).hindukira(true);
+    //currentTime = millis();
+    //socket.loop();
+    pathTemplate();
     //Kwbot.forward().time(1000).speed(1.3);
 //    Kwbot
 //      .speed(1.4)
