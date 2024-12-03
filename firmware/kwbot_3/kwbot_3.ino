@@ -26,7 +26,7 @@ void setup() {
      ###############################################################################################################*/
         //wifiCreate();
         //wifiConnect();
-        connecting("CANALBOX-350A","VpT4bsxuhs");
+        connecting("CANALBOX-350A-2G","VpT4bsxuhs");
      /*##############################################################################################################
      *  // end of network connectivity
      ###############################################################################################################*/
@@ -97,23 +97,10 @@ void setup() {
 }
 
 void loop(){
-    //Kwbot.speed(1.3).hindukira(true);
-    //currentTime = millis();
-    //socket.loop();
-    pathTemplate();
-    //Kwbot.forward().time(1000).speed(1.3);
-//    Kwbot
-//      .speed(1.4)
-//      .time(10000)
-//      .forward()
-//      .ready(millis(),done,waiting);
-
-    
-//    if(!times){
-//      //pathread New =  Kwbot.load("<(90-2.3){1.3-2.3}[0-0]><(40-5){1.6-5}[7-1]>").read(true);
-//      //Serial.println(Kwbot.load("<(90-2.3){1.3-2.3}[0-0]><(40-5){1.6-5}[7-1]>").read(true).speed);
-//    }
-//    times = true;
+    Kwbot.speed(2).turnLeft();
+    delay(2000);
+    Kwbot.speed(2).turnRight();
+    delay(2000);
 }
  /*##############################################################################################################
  *  // grobal function to convert from string to char pointer
