@@ -110,7 +110,7 @@ void testUSBOTG(){
       if(Serial.available()){
         char inChar = (char)Serial.read();
         Serial.println(inChar);
-        if(inChar == '\n'){
+        if(inChar == '%'){
           stringComplete = true;
         }
         else {
