@@ -96,18 +96,31 @@ void setup() {
      ###############################################################################################################*/
 }
 
-int speedxx = 0;
+String inputString = ""; // A string to hold incoming data
+bool stringComplete = false; // Whether the string is complete
+
 void loop(){
-      Kwbot.speed(0.01*speedxx);
-      Kwbot.forward();
-      speedxx++;
-      if(speedxx==100) speedxx = 0;
-      Serial.println("First DAC:");
-      Serial.print(motorLeft.DAC_VALUE);
-      Serial.println("Second DAC:");
-      Serial.print(motorRight->DAC_VALUE);
-      Serial.println("####");
-      delay(50);
+      Kwbot.speed(2);
+      if(Serial.available()){
+        char inChar = (char)Serial.read();
+        if(inChar == '\n'){
+          stringComplete = true;
+        }
+        else {
+            inputString += inChar; // Append character to string
+        }
+      }
+
+      if (stringComplete) {
+          if(inputString=="forward"){
+             Kwbot.forward();
+          }
+          else Serial.println("Received: " + inputString); // For debugging
+          decodeString(inputString); // Call decode function
+          inputString = ""; // Clear the string for the next input
+          stringComplete = false;
+      }
+      
       //pathTemplate();
 //    Kwbot.speed(2).turnLeft();
 //    delay(2000);
