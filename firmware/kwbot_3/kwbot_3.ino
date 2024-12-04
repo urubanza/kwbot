@@ -116,7 +116,7 @@ void loop(){
              Kwbot.forward();
           }
           else Serial.println("Received: " + inputString); // For debugging
-          decodeString(inputString); // Call decode function
+          //decodeString(inputString); // Call decode function
           inputString = ""; // Clear the string for the next input
           stringComplete = false;
       }
