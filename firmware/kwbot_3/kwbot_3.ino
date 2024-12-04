@@ -100,15 +100,16 @@ String inputString = ""; // A string to hold incoming data
 bool stringComplete = false; // Whether the string is complete
 
 void loop(){
-  Serial.println("The Phone Reads");
-  delay(1000);
-  //testUSBOTG();
+  //Serial.println("The Phone Reads");
+  //delay(1000);
+  testUSBOTG();
 }
 
 void testUSBOTG(){
   Kwbot.speed(2);
       if(Serial.available()){
         char inChar = (char)Serial.read();
+        Serial.println(inChar);
         if(inChar == '\n'){
           stringComplete = true;
         }
