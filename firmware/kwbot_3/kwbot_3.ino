@@ -109,7 +109,6 @@ void testUSBOTG(){
   Kwbot.speed(2);
       if(Serial.available()){
         char inChar = (char)Serial.read();
-        Serial.println(inChar);
         if(inChar == '%'){
           stringComplete = true;
         }
