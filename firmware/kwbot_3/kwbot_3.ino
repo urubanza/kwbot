@@ -102,6 +102,7 @@ void loop(){
       Kwbot.forward();
       speedxx++;
       if(speedxx==200) speedxx = 0;
+      delay(200);
       //pathTemplate();
 //    Kwbot.speed(2).turnLeft();
 //    delay(2000);
