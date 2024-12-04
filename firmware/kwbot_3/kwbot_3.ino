@@ -100,7 +100,13 @@ String inputString = ""; // A string to hold incoming data
 bool stringComplete = false; // Whether the string is complete
 
 void loop(){
-      Kwbot.speed(2);
+  Serial.println("The Phone Reads");
+  delay(1000);
+  //testUSBOTG();
+}
+
+void testUSBOTG(){
+  Kwbot.speed(2);
       if(Serial.available()){
         char inChar = (char)Serial.read();
         if(inChar == '\n'){
@@ -115,17 +121,19 @@ void loop(){
           if(inputString=="forward"){
              Kwbot.forward();
           }
-          else Serial.println("Received: " + inputString); // For debugging
+          else if(inputString=="back"){
+             Kwbot.backward();
+          }
+          else if(inputString=="stop"){
+             Kwbot.Stop();
+          }
+          else{
+             Serial.println("Received: " + inputString); // For debugging
+          } 
           //decodeString(inputString); // Call decode function
           inputString = ""; // Clear the string for the next input
           stringComplete = false;
       }
-      
-      //pathTemplate();
-//    Kwbot.speed(2).turnLeft();
-//    delay(2000);
-//    Kwbot.speed(2).turnRight();
-//    delay(2000);
 }
  /*##############################################################################################################
  *  // grobal function to convert from string to char pointer
