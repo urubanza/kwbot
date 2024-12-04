@@ -1,4 +1,5 @@
 #pragma once
+#define DAC_RESOLUTION 1023
 // a class to control the motors pin and activities
 class motors
 {
@@ -18,6 +19,7 @@ private:
 	// the rpm of the motor in round per minutes
 	float RPM;
 public:
+	unsigned short int DAC_VALUE = 0;
 	motors(): TYPE(0){}
 	motors speedPort(unsigned short int);
 	unsigned short int& speedPort();

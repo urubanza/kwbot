@@ -65,7 +65,7 @@ void setup() {
       motorLeft.rpm(30);
       motorLeft.init();
       
-      Kwbot.Motors(motorRight,&motorLeft).direction(90).speed(0).location(3).location(0,0,0).time(0);
+      Kwbot.Motors(&motorLeft,motorRight).direction(90).speed(0).location(3).location(0,0,0).time(0);
 
   
     
@@ -101,8 +101,13 @@ void loop(){
       Kwbot.speed(0.01*speedxx);
       Kwbot.forward();
       speedxx++;
-      if(speedxx==200) speedxx = 0;
-      delay(200);
+      if(speedxx==100) speedxx = 0;
+      Serial.println("First DAC:");
+      Serial.print(motorLeft.DAC_VALUE);
+      Serial.println("Second DAC:");
+      Serial.print(motorRight->DAC_VALUE);
+      Serial.println("####");
+      delay(50);
       //pathTemplate();
 //    Kwbot.speed(2).turnLeft();
 //    delay(2000);
