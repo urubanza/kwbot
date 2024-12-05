@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/input_shape_trans"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_margin="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N O T I F I C A T I O N S"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:textColor="@color/colorPrimary"/>
+            <ImageView
+
+                android:id="@+id/mess"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/loupe_black"
+                android:layout_gravity="center|right"/>
+            <ImageView
+                android:id="@+id/noti"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_home_black_24dp"
+                android:layout_gravity="center|right"/>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingTop="10dp">
+        <ListView
+            android:id="@+id/notification_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
