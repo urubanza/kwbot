@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +22,11 @@ import com.pip.sensorskwbot.utils.pTimber;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraSelector;
@@ -53,6 +56,7 @@ public abstract class CameraActivity extends ControlsActivity{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferencesManager = new SharedPreferencesManager(this);
+        initFirstModel();
     }
 
     protected View inflateFragment(View view){
@@ -69,6 +73,7 @@ public abstract class CameraActivity extends ControlsActivity{
         previewView = cameraView.findViewById(R.id.viewFinder);
         lensFacing = CameraSelector.LENS_FACING_BACK;
 
+        cameraExecutor = Executors.newSingleThreadExecutor();
         if (!PermissionUtils.hasCameraPermission(this)) {
             requestPermissionLauncherCamera.launch(Constants.PERMISSION_CAMERA);
         } else if (PermissionUtils.shouldShowRational(this, Constants.PERMISSION_CAMERA)) {
@@ -157,36 +162,39 @@ public abstract class CameraActivity extends ControlsActivity{
                 this.analyserResolution = new Size(resolutionSize.getHeight(), resolutionSize.getWidth());
             else this.analyserResolution = resolutionSize;
         }
-        bindCameraUseCases();
+        if(cameraProvider==null){
+            Log.d("?????","Set the camera provider first");
+            setupCamera();
+        } else {
+            bindCameraUseCases();
+        }
+        //
     }
     @SuppressLint("RestrictedApi")
     private void setupCamera() {
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
                 ProcessCameraProvider.getInstance(getApplicationContext());
 
+
         cameraProviderFuture.addListener(new Runnable() {
             @Override
             public void run() {
                 try {
+                    Log.w("?????","Setting up Camera provider!");
                     cameraProvider = cameraProviderFuture.get();
-                    bindCameraUseCases();
+                    if(cameraProvider==null){
+                        Log.e("?????","Setting up Camera provider failed !");
+                    }
+                    else {
+                        Log.i("?????","Setting up Camera provider Success !");
+                        bindCameraUseCases();
+                    }
                 } catch (ExecutionException | InterruptedException e) {
                     pTimber.e("Camera setup failed: %s", e.toString());
                     throw new RuntimeException(e);
                 }
             }
         },ContextCompat.getMainExecutor(getApplicationContext()));
-
-        cameraProviderFuture.addListener(
-                () -> {
-                    try {
-                        cameraProvider = cameraProviderFuture.get();
-                        bindCameraUseCases();
-                    } catch (ExecutionException | InterruptedException e) {
-                        pTimber.e("Camera setup failed: %s", e.toString());
-                    }
-                },
-                ContextCompat.getMainExecutor(getApplicationContext()));
     }
 
     @SuppressLint({"UnsafeExperimentalUsageError", "UnsafeOptInUsageError"})
@@ -203,32 +211,68 @@ public abstract class CameraActivity extends ControlsActivity{
                 new CameraSelector.Builder().requireLensFacing(lensFacing).build();
         ImageAnalysis imageAnalysis;
 
-        if (analyserResolution == null)
+
+
+        if (analyserResolution == null){
             imageAnalysis =
                     new ImageAnalysis.Builder().setTargetAspectRatio(AspectRatio.RATIO_16_9).build();
-        else
+        }
+
+        else{
             imageAnalysis = new ImageAnalysis.Builder().setTargetResolution(analyserResolution).build();
+        }
+
+//        imageAnalysis.setAnalyzer(cameraExecutor, new ImageAnalysis.Analyzer()  {
+//            @Override
+//            public void analyze(@NonNull ImageProxy image) {
+//                nonLambda();
+//                if(bitmapBuffer == null) {
+//                    bitmapBuffer = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
+//                }
+//                else nonLambda();
+//                    rotationDegrees = image.getImageInfo().getRotationDegrees();
+//                    YuvToRgbConverter.convertYuvToRgb(image.getImage(),bitmapBuffer);
+//                    image.close();
+//                    processFrame(bitmapBuffer,image);
+//            }
+//
+//            private void nonLambda(){
+//                Log.w("?????","Running here");
+//            }
+//        });
+
+        //Log.w("?????","Running here");
+
         // insert your code here.
         imageAnalysis.setAnalyzer(
                 cameraExecutor,
                 image -> {
+
                     if (bitmapBuffer == null)
                         bitmapBuffer =
                                 Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
 
                     rotationDegrees = image.getImageInfo().getRotationDegrees();
-                    converter.yuvToRgb(image.getImage(), bitmapBuffer);
+                    //converter.yuvToRgb(image.getImage(), bitmapBuffer);
+                    YuvToRgbConverter.convertYuvToRgb(image.getImage(),bitmapBuffer);
                     image.close();
 
                     processFrame(bitmapBuffer, image);
                 });
+
         try {
             if (cameraProvider != null) {
+                Log.d("?????","Bidding the Image analyzer to the camera Provider...");
                 cameraProvider.unbindAll();
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
             }
+            else {
+                Log.w("?????","The Camera Provider is Null");
+            }
         } catch (Exception e) {
+            Log.w("?????","Use case binding failed " + e.getMessage());
             pTimber.e("Use case binding failed: %s", e.toString());
+
         }
     }
     public int getRotationDegrees() {

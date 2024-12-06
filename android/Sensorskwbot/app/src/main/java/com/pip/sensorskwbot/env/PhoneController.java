@@ -48,6 +48,8 @@ public class PhoneController {
   private void init(Context context) {
     ControllerConfig.getInstance().init(context);
 
+    //videoServer = new RtspServer();
+
 //    videoServer =
 //        "RTSP".equals(ControllerConfig.getInstance().getVideoServerType())
 //            ? new RtspServer()

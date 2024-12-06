@@ -87,4 +87,5 @@ dependencies {
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:2.8.4"
     implementation "androidx.navigation:navigation-ui:2.8.4"
+
 }

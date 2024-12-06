@@ -1,18 +1,22 @@
 package com.pip.sensorskwbot;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.pip.sensorskwbot.env.ControllerToBotEventBus;
 import com.pip.sensorskwbot.utils.FileUtils;
 import com.pip.sensorskwbot.utils.PermissionUtils;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -25,7 +29,7 @@ import com.pip.sensorskwbot.utils.pTimber;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ControlsActivity extends AppCompatActivity {
+public abstract class ControlsActivity extends AppCompatActivity implements ServerListener {
     protected List<Model> masterList;
     private ArrayAdapter<String> modelAdapter;
 
@@ -59,10 +63,12 @@ public abstract class ControlsActivity extends AppCompatActivity {
 
     @NotNull
     protected List<String> getModelNames(java.util.function.Predicate<Model> filter){
+        if(masterList!=null)
         return masterList.stream()
                 .filter(filter)
                 .map(f -> FileUtils.nameWithoutExtension(f.name))
                 .collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -78,6 +84,8 @@ public abstract class ControlsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+
+
     @Override
     public synchronized void onPause() {
         pTimber.d("onPause");
@@ -92,6 +100,64 @@ public abstract class ControlsActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    @Override
+    public void onAddModel(String model) {
+        Model item =
+                new Model(
+                        masterList.size() + 1,
+                        Model.CLASS.AUTOPILOT,
+                        Model.TYPE.CMDNAV,
+                        model,
+                        Model.PATH_TYPE.FILE,
+                        this.getFilesDir() + File.separator + model,
+                        "256x96");
+
+        if (modelAdapter != null && modelAdapter.getPosition(model) == -1) {
+            modelAdapter.add(model);
+            masterList.add(item);
+            FileUtils.updateModelConfig(this, masterList);
+        } else {
+            setModel(item);
+        }
+        Toast.makeText(
+                        this.getApplicationContext(),
+                        "AutopilotModel added: " + model,
+                        Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    protected void initFirstModel() {
+
+        List<String> models = getModelNames(new Predicate<Model>() {
+            @Override
+            public boolean test(Model f) {
+                return f.type.equals(Model.TYPE.DETECTOR) && f.pathType != Model.PATH_TYPE.URL;
+            }
+        });
+
+        if(models==null){
+            Log.d("INITIKKKK","No List found here!!");
+            return;
+        }
+
+        if(models.size()>0){
+            masterList.stream().filter(new Predicate<Model>() {
+                @Override
+                public boolean test(Model model) {
+
+                    return model.name.contains(models.get(0));
+                }
+            }).findFirst().filter(new Predicate<Model>() {
+                @Override
+                public boolean test(Model modelx) {
+                    setModel(modelx);
+                    return true;
+                }
+            });
+        }
+        else Log.d("INITIKKKK","No List found on your phone!!");
+    }
+
 
 
     protected void setModel(Model model) {}
@@ -99,4 +165,6 @@ public abstract class ControlsActivity extends AppCompatActivity {
     protected abstract void processControllerKeyData(String command);
 
     protected abstract void processUSBData(String data);
+
+
 }
