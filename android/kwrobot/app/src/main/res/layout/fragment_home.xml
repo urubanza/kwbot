@@ -6,16 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/general_grey"
-    tools:context=".ui.home.HomeFragment"
-    >
+    tools:context=".ui.home.HomeFragment">
+
+    <!-- Header Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutHeader"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/header_background"
         android:padding="10dp"
         app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Top Text -->
         <TextView
+            android:id="@+id/topText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -23,32 +27,37 @@
             android:text="K W B O T"
             android:textSize="25sp"
             android:textColor="#fff"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/topText"
-            android:textStyle="bold"/>
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Sub Top Text -->
         <TextView
+            android:id="@+id/subTopText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/topText"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="28dp"
             android:text="KwaandaLabs"
             android:textColor="@color/colorAccent"
-            android:layout_marginTop="28dp"
-            android:layout_marginLeft="4dp"
             android:textSize="12sp"
-            android:id="@+id/subTopText"/>
+            app:layout_constraintStart_toEndOf="@id/topText"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Profile Icon -->
         <ImageView
+            android:id="@+id/imgSearch"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            app:layout_constraintBottom_toBottomOf="@id/topText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/topText"
             android:layout_marginRight="15dp"
             android:contentDescription="Menu"
             android:src="@drawable/ic_profile"
             android:tint="@color/cardview_light_background"
-            android:id="@+id/imgSearch"/>
+            app:layout_constraintBottom_toBottomOf="@id/topText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/topText" />
+
+        <!-- Search Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,6 +68,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imgSearch">
+
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="40dp"
@@ -71,17 +81,18 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"
                 android:importantForAutofill="no" />
+
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/search_icon_bg"
                 android:contentDescription="search"
                 android:padding="12dp"
-                android:src="@drawable/loupe_black"/>
-
+                android:src="@drawable/loupe_black" />
         </LinearLayout>
-            
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Main Content Section -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -89,13 +100,16 @@
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutHeader">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <!-- Body Section 1 -->
             <LinearLayout
+                android:id="@+id/layoutBody1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/layoutBody1"
                 android:layout_marginTop="22dp"
                 android:background="@drawable/round_rectangle_bg_color"
                 android:gravity="center"
@@ -105,13 +119,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/layoutBody2"
                 app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_margin="8dp"
                     android:padding="8dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/dashboard"/>
+                    android:src="@drawable/dashboard" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -119,12 +135,14 @@
                     android:text="Dashboard"
                     android:textStyle="bold"
                     android:textColor="@color/colorAccent"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp" />
             </LinearLayout>
+
+            <!-- Body Section 2 -->
             <LinearLayout
+                android:id="@+id/layoutBody2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/layoutBody2"
                 android:layout_marginTop="22dp"
                 android:background="@drawable/round_rectangle_bg_color"
                 android:gravity="center"
@@ -132,15 +150,17 @@
                 android:padding="15dp"
                 app:layout_constraintDimensionRatio="H,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/layoutBody1">
+                app:layout_constraintStart_toEndOf="@id/layoutBody1"
+                app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_margin="8dp"
                     android:padding="8dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_robot"/>
+                    android:src="@drawable/ic_robot" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,25 +168,28 @@
                     android:text="Robots"
                     android:textStyle="bold"
                     android:textColor="@color/colorAccent"
-                    android:textSize="20dp"/>
+                    android:textSize="20dp" />
             </LinearLayout>
+
+            <!-- Image Slider -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_margin="20dp"
                 app:layout_constraintTop_toBottomOf="@id/layoutBody1">
-                <com.daimajia.slider.library.SliderLayout
-                    android:layout_height="200dp"
-                    android:layout_width="match_parent"
-                    android:scaleType="centerCrop"
-                    android:id="@+id/sliders"
-                    android:src="@drawable/dashboard">
 
-                </com.daimajia.slider.library.SliderLayout>
+                <com.daimajia.slider.library.SliderLayout
+                    android:id="@+id/sliders"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/dashboard" />
             </RelativeLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <!-- Floating Action Menu -->
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/theBottomMenu"
         android:layout_width="wrap_content"
@@ -176,57 +199,33 @@
         android:layout_marginBottom="45dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        app:menu_animationDelayPerItem="55"
-        app:menu_backgroundColor="@android:color/transparent"
-        app:menu_buttonSpacing="0dp"
-        app:menu_colorNormal="@color/colorAccent"
-        app:menu_colorPressed="@color/colorAccent"
-        app:menu_colorRipple="#99d4d4d4"
-        app:menu_fab_label="Add new"
-        app:menu_fab_size="normal"
-        app:menu_icon="@drawable/ic_add_white"
-        app:menu_labels_colorNormal="@color/colorAccent"
-        app:menu_labels_colorPressed="@color/colorAccent"
-        app:menu_labels_colorRipple="#66efecec"
-        app:menu_labels_cornerRadius="3dp"
-        app:menu_labels_ellipsize="none"
-        app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-        app:menu_labels_margin="0dp"
-        app:menu_labels_maxLines="-1"
-        app:menu_labels_padding="8dp"
-        app:menu_labels_position="left"
-        app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-        app:menu_labels_showShadow="true"
-        app:menu_labels_singleLine="false"
-        app:menu_labels_textColor="#f2f1f1"
-        app:menu_labels_textSize="15sp"
         app:menu_openDirection="up"
-        app:menu_shadowColor="#66aff198"
-        app:menu_shadowRadius="4dp"
-        app:menu_shadowXOffset="1dp"
-        app:menu_shadowYOffset="4dp"
-        app:menu_showShadow="true">
+        app:menu_colorNormal="@color/colorAccent"
+        app:menu_fab_label="Add new">
+
+        <!-- Floating Action Buttons -->
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_path_for"
-            android:id="@+id/menu1"
             app:fab_size="mini"
-            app:fab_colorNormal="@color/colorAccent"/>
+            app:fab_colorNormal="@color/colorAccent" />
+
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_robot"
-            android:id="@+id/menu2"
             app:fab_colorNormal="@color/colorAccent"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
+
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_error"
-            android:id="@+id/menu3"
             app:fab_colorNormal="@color/colorAccent"
-            app:fab_size="mini"/>
-
+            app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>
