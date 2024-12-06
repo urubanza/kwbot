@@ -256,13 +256,13 @@ public class MainActivity extends CameraActivity {
 
 
                             if (!results.isEmpty()) {
-                                String theString = "Objects: " + results.size()
+                                if(results.get(0).getConfidence()>0.7){
+                                    String theString = "Objects: " + results.size()
 
-                                        + " Confidendence : " + results.get(0).getConfidence();
+                                            + " Confidendence : " + results.get(0).getConfidence();
 
-                                Log.d("&&&&",theString);
-
-
+                                    Log.d("&&&&",theString);
+                                }
                                 pTimber.i(
                                         "Object: "
                                                 + results.get(0).getLocation().centerX()
