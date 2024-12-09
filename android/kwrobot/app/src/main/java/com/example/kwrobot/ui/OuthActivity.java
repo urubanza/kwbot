@@ -132,7 +132,7 @@ public class OuthActivity extends AppCompatActivity {
     private String parseErrorMessage(String response) {
         if (response == null) return "An unknown error occurred";
         if (response.contains("Invalid business ID or passkey"))
-            return "Invalid Business ID or Passkey combination. Try again.";
+            return "Invalid ID or Password combination. Try again.";
         if (response.contains("Maximum number of users reached"))
             return "Membership limit reached. Please wait or upgrade.";
         if (response.contains("Account is inactive"))
