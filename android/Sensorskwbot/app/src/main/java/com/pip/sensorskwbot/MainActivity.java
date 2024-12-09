@@ -24,6 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pip.sensorskwbot.comminication.usb.ControlLines;
+import com.pip.sensorskwbot.comminication.usb.USB;
+import com.pip.sensorskwbot.comminication.usb.UsbDeviceIdentities;
+import com.pip.sensorskwbot.comminication.usb.UsbMessages;
 import com.pip.sensorskwbot.customview.OverlayView;
 import com.pip.sensorskwbot.env.BorderedText;
 import com.pip.sensorskwbot.env.ImageUtils;
@@ -49,6 +53,7 @@ public class MainActivity extends CameraActivity {
 
     ActivityMainBinding binding;
     //Innertia navigation Sensors
+
     private SensorManager sensorManager;
     private Sensor Accelerometer;
     private Sensor Magnetometer;
@@ -90,6 +95,27 @@ public class MainActivity extends CameraActivity {
 
     private static final float TEXT_SIZE_DIP = 10;
 
+    private USB lowLevelCom;
+
+    private static UsbDeviceIdentities ControllersId;
+
+    private UsbMessages usbMessages = new UsbMessages() {
+        @Override
+        public void onStatus(String message) {
+            Toast.makeText(MainActivity.this,"Message : "+message,Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onError(String message) {
+            Toast.makeText(MainActivity.this,"Error : "+message,Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onWarning(String message) {
+            Toast.makeText(MainActivity.this,"Warning : "+message,Toast.LENGTH_LONG).show();
+        }
+    };
+
     public static Context getContext() {
         return context;
     }
@@ -112,6 +138,17 @@ public class MainActivity extends CameraActivity {
         }
         addCamera(xc);
         setAnalyserResolution(Enums.Preview.HD.getValue());
+        ControllersId = USB.scanDevice(this);
+        if(ControllersId!=null){
+            ControllersId.baudRate = 115200;
+            lowLevelCom = new USB(this,ControllersId,usbMessages);
+            Toast.makeText(this,"Connected to the Low Level Robot success!!",Toast.LENGTH_LONG).show();
+            lowLevelCom.connect(this);
+            lowLevelCom.send("mimes");
+        }
+        else {
+            Toast.makeText(this,"Failed to connect to Low Level Robot!",Toast.LENGTH_LONG).show();
+        }
     }
     private void updateCropImageInfo() {
         //    Timber.i("%s x %s",getPreviewSize().getWidth(), getPreviewSize().getHeight());
