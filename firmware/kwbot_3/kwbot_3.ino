@@ -237,10 +237,12 @@ void turnleft(const char *payload, size_t length){
   String subSpeed = String(payload).substring(0,4);
   if(!times&&connec)
     Kwbot.time(1).speed(subSpeed.toDouble()).TurnLeft();
+/*
   else if(times)
     Serial.println("there is a default path playing");
   else if(!connec)
     Serial.println("the robot is not connected");
+*/
   
 }
 
@@ -248,30 +250,36 @@ void turnright(const char *payload, size_t length){
     String subSpeed = String(payload).substring(0,4);
     if(!times&&connec)
       Kwbot.time(1).speed(subSpeed.toDouble()).TurnRight();
+  /*
     else if(times)
       Serial.println("there is a default path playing");
     else if(!connec)
       Serial.println("the robot is not connected");
+  */
 }
 
 void forward(const char *payload, size_t length){
   String subSpeed = String(payload).substring(0,4); 
   if(!times&&connec)
     Kwbot.time(1).speed(subSpeed.toDouble()).forward();
+/*
   else if(times)
     Serial.println("there is a default path playing");
   else if(!connec)
     Serial.println("the robot is not connected");
+*/
     
 }
 void backward(const char *payload, size_t length){
   String subSpeed = String(payload).substring(0,4);
   if(!times&&connec)
     Kwbot.time(1).speed(subSpeed.toDouble()).backward();
+/*
   else if(times)
     Serial.println("there is a default path playing");
   else if(!connec)
     Serial.println("the robot is not connected");
+*/
 }
 
 void stopR(const char *payload, size_t length){
