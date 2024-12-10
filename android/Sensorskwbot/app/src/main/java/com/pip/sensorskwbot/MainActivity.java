@@ -31,6 +31,7 @@ import com.pip.sensorskwbot.comminication.usb.UsbMessages;
 import com.pip.sensorskwbot.customview.OverlayView;
 import com.pip.sensorskwbot.env.BorderedText;
 import com.pip.sensorskwbot.env.ImageUtils;
+import com.pip.sensorskwbot.filters.INSInterval;
 import com.pip.sensorskwbot.tracking.MultiBoxTracker;
 import com.pip.sensorskwbot.utils.CameraUtils;
 import com.pip.sensorskwbot.utils.Enums;
@@ -42,17 +43,23 @@ import androidx.camera.core.ImageProxy;
 import com.pip.sensorskwbot.databinding.ActivityMainBinding;
 import com.pip.sensorskwbot.utils.pTimber;
 
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends CameraActivity {
 
     ActivityMainBinding binding;
-    //Innertia navigation Sensors
+    //Inertia navigation Sensors
 
     private SensorManager sensorManager;
     private Sensor Accelerometer;
@@ -68,6 +75,8 @@ public class MainActivity extends CameraActivity {
     private Handler handler;
 
     private HandlerThread handlerThread;
+
+    private INSInterval Fmagneto;
 
 
     public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -102,23 +111,44 @@ public class MainActivity extends CameraActivity {
     private UsbMessages usbMessages = new UsbMessages() {
         @Override
         public void onStatus(String message) {
-            Toast.makeText(MainActivity.this,"Message : "+message,Toast.LENGTH_LONG).show();
+            try{
+                webSocketClient.send(message);
+            }
+            catch (Exception e){
+               //Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
         public void onError(String message) {
-            Toast.makeText(MainActivity.this,"Error : "+message,Toast.LENGTH_LONG).show();
+            try{
+                webSocketClient.send(message);
+            }
+            catch (Exception e){
+                //Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+            }
+            //Toast.makeText(MainActivity.this,"Error : "+message,Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onWarning(String message) {
-            Toast.makeText(MainActivity.this,"Warning : "+message,Toast.LENGTH_LONG).show();
+            try{
+                webSocketClient.send(message);
+            }
+            catch (Exception e){
+                //Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+            }
+            //Toast.makeText(MainActivity.this,"Warning : "+message,Toast.LENGTH_LONG).show();
         }
     };
+
+    private WebSocketClient webSocketClient;
 
     public static Context getContext() {
         return context;
     }
+
+    private boolean SocketConnected = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +158,8 @@ public class MainActivity extends CameraActivity {
         messageView = findViewById(R.id.display_data);
         View xc = getLayoutInflater().inflate(R.layout.fragment_camera, binding.getRoot());
         context = getApplicationContext();
+        connectWebSocket();
+
         if(initSensors()){
             initListeners();
             AssignSensors();
@@ -136,18 +168,47 @@ public class MainActivity extends CameraActivity {
         else {
             showMessage("Sensors not working!");
         }
+
         addCamera(xc);
         setAnalyserResolution(Enums.Preview.HD.getValue());
+        connectRobot();
+
+
+
+    }
+
+    private void connectRobot(){
+
+
         ControllersId = USB.scanDevice(this);
-        if(ControllersId!=null){
+        if(ControllersId!=null && webSocketClient.isOpen()){
             ControllersId.baudRate = 115200;
             lowLevelCom = new USB(this,ControllersId,usbMessages);
-            Toast.makeText(this,"Connected to the Low Level Robot success!!",Toast.LENGTH_LONG).show();
+            usbMessages.onStatus("Connected to the Low Level Robot success!!");
             lowLevelCom.connect(this);
-            lowLevelCom.send("mimes");
+            String[] toSends = {"forward%","back%","stop%"};
+            final int[] initials = {0};
+            //lowLevelCom.send("forward%");
+            Timer theTimer = new Timer();
+
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lowLevelCom.read();
+//                            lowLevelCom.send(toSends[initials[0]]);
+//                            initials[0]++;
+//                            if(initials[0] >2) initials[0] = 0;
+                        }
+                    });
+                }
+            };
+            theTimer.scheduleAtFixedRate(task,500,50);
         }
         else {
-            Toast.makeText(this,"Failed to connect to Low Level Robot!",Toast.LENGTH_LONG).show();
+            usbMessages.onError("No Robot Found");
         }
     }
     private void updateCropImageInfo() {
@@ -355,6 +416,9 @@ public class MainActivity extends CameraActivity {
         if (Gyroscope == null) {
             Log.e("Sensors", "Gyroscope is not available");
         }
+
+        Fmagneto = new INSInterval(0.3);
+
         return (Accelerometer!=null)
                 &&(Magnetometer!=null)
                 &&(Gyroscope!=null)
@@ -401,7 +465,11 @@ public class MainActivity extends CameraActivity {
                 String disply = " X : "+  event.values[0]
                         + " Y : " + event.values[1]
                         + " Z : " + event.values[2];
-                messageView.setText(disply);
+                if(webSocketClient.isOpen()){
+                    if(Fmagneto.Sensed(event.values[0],event.values[1],event.values[2]))
+                        webSocketClient.send(disply);
+                }
+                //messageView.setText(disply);
             }
 
             @Override
@@ -521,19 +589,6 @@ public class MainActivity extends CameraActivity {
         }
     }
 
-    private String[] getModelFiles() {
-        return MainActivity.this.getFilesDir().list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                nonLambda();
-                return name.endsWith(".tflite");
-            }
-
-            private void nonLambda(){
-
-            }
-        });
-    }
 
 
     @Override
@@ -549,5 +604,64 @@ public class MainActivity extends CameraActivity {
     @Override
     public void onServerListChange(Set<String> servers) {
 
+    }
+
+
+    private void connectWebSocket() {
+        URI uri;
+        Toast.makeText(this," Connecting to : " + ServerUrl() ,Toast.LENGTH_LONG).show();
+        try {
+            uri = new URI(ServerUrl() ); // Replace <PC_IP> with the PC's IP address
+            //Toast.makeText(this,"Conneting to : "+ uri.toASCIIString(),Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this,"Failed : "+ e.getMessage(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            Log.d("SXSXSSSS",e.getMessage());
+            return;
+        }
+
+        webSocketClient = new WebSocketClient(uri) {
+            @Override
+            public void onOpen(ServerHandshake handshakedata) {
+                runOnUiThread(() -> {
+                    SocketConnected = true;
+                    Log.d("SXSXSSSS","Connected to server");
+                });
+            }
+
+            @Override
+            public void onMessage(String message) {
+                runOnUiThread(() -> {
+                    System.out.println("Server says: " + message);
+                    Log.d("SXSXSSSS","Server says: " + message);
+                });
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                runOnUiThread(() -> {
+                    Log.d("SXSXSSSS","Connection closed");
+                    SocketConnected = false;
+                    System.out.println("Connection closed");
+                });
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                runOnUiThread(() -> {
+                    System.out.println("Error: " + ex.getMessage());
+                    Log.d("SXSXSSSS",ex.getMessage());
+                });
+            }
+        };
+
+        webSocketClient.connect();
+    }
+
+    private String ServerUrl(){
+        return "ws://"+this.getString(R.string.websocket_server) + ":" + this.getString(R.string.websocket_port);
+    }
+    private String ServerUrlH(){
+        return "http://"+ getString(R.string.websocket_server) + ":" +  getString(R.string.websocket_port);
     }
 }

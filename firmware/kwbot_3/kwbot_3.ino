@@ -3,6 +3,13 @@
 #include <ArduinoJson.h>
 #include"modules/settup.h"
 
+//define sound velocity in cm/uS
+#define SOUND_VELOCITY 0.034
+#define CM_TO_INCH 0.393701
+
+long duration;
+float distanceCm;
+float distanceInch;
 
 bool times = false;
 bool connec = false;
@@ -13,6 +20,11 @@ motors motorLeft = motors();
 path Kwbot = path();
 SocketIoClient socket;
 
+//Ultrasonic sensors pin
+const int trigPin = 5;
+const int echoPin = 16;
+
+
 double currentTime = 0;
 
 
@@ -21,7 +33,7 @@ void setup() {
       Serial.begin(115200);
 
 
-      /*##############################################################################################################
+     /*##############################################################################################################
      * // start of network connectivity
      ###############################################################################################################*/
         //wifiCreate();
@@ -30,7 +42,9 @@ void setup() {
      /*##############################################################################################################
      *  // end of network connectivity
      ###############################################################################################################*/
-
+  
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
      
       /*
         initialization of the sensor pin infrared and Ultrasonic
@@ -102,7 +116,64 @@ bool stringComplete = false; // Whether the string is complete
 void loop(){
   //Serial.println("The Phone Reads");
   //delay(1000);
-  testUSBOTG();
+  //testUSBOTG();
+  socket.loop();
+  //distanceMeasure();
+  ReadOtg();
+}
+
+void ReadOtg(){
+	if(Serial.available()){
+		char inChar = (char)Serial.read();
+		if(inChar == '%'){
+          stringComplete = true;
+        }
+        else {
+            inputString += inChar; // Append character to string
+        }
+	}
+	
+	if (stringComplete) {
+		
+		if(inputString=="stop"){
+			Kwbot.Stop();
+			Serial.println("Stoping");
+		}
+		// format is forward<speed>
+		else if(inputString.indexOf("forward")>-1){
+			int theSpeedStrt = inputString.indexOf("<");
+			int theSpeedEndl = inputString.indexOf(">");
+			String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+			Serial.print("The Speed : ");
+			Serial.println(theSpeeds);
+			Serial.println("");
+		}
+		// format is back<speed>
+		else if(inputString.indexOf("back")>-1){
+			int theSpeedStrt = inputString.indexOf("<");
+			int theSpeedEndl = inputString.indexOf(">");
+			String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+			Serial.print("The Speed : ");
+			Serial.println(theSpeeds);
+			Serial.println("");
+		}
+		// format is turn<speed>(dir)
+		else if(inputString.indexOf("turn")>-1){
+			int theSpeedStrt = inputString.indexOf("<");
+			int theSpeedEndl = inputString.indexOf(">");
+			String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+			Serial.print("The Speed : ");
+			Serial.println(theSpeeds);
+			Serial.println("");
+			
+			int theDirStrt = inputString.indexOf("(");
+			int theDirEndl = inputString.indexOf(")");
+			String theDir = inputString.substring(theDirStrt,theDirEndl);
+			Serial.print("The Speed : ");
+			Serial.println(theDir);
+			Serial.println("");
+		}
+	}
 }
 
 void testUSBOTG(){
@@ -207,6 +278,33 @@ void backward(const char *payload, size_t length){
 void stopR(const char *payload, size_t length){
     String subSpeed = String(payload).substring(0,4);
     Kwbot.time(1).speed(0).forward().Stop();
+}
+
+
+void distanceMeasure(){
+  // Clears the trigPin
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate the distance
+  distanceCm = duration * SOUND_VELOCITY/2;
+  
+  // Convert to inches
+  distanceInch = distanceCm * CM_TO_INCH;
+
+  if (distanceCm > 0 && distanceCm <= 15){
+   Serial.print("#");
+   Serial.print(distanceCm);
+   Serial.print("%");
+   delay(100);
+  }
 }
 
 void event(const char *payload, size_t length){

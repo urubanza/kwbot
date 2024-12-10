@@ -134,7 +134,7 @@ class path
 
 		static int angleDeg(float);
 		static float angleRad(int);
-		path hindukira(bool);
+		path rotate(bool);
 		path ready(double, void (*)(path), void (*)(timer));
 		timer tim();
 		path restartTimer(double);

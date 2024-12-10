@@ -197,7 +197,7 @@ public class USB implements SerialInputOutputManager.Listener{
         }
     }
 
-    private void read() {
+    public void read() {
         if(!controlLines.Connected()){
             TheusbMessages.onStatus("Low level Usb Device not connected");
             return;
@@ -214,11 +214,19 @@ public class USB implements SerialInputOutputManager.Listener{
     }
 
     private void receive(byte[] data) {
-        SpannableStringBuilder spn = new SpannableStringBuilder();
-        spn.append("receive " + data.length + " bytes\n");
-        if(data.length > 0) spn.append(HexDump.dumpHexString(data)).append("\n");
-        TheusbMessages.onStatus("Received : " + spn);
-        //receiveText.append(spn);
+        if(data.length > 0){
+            String oldMess = HexDump.dumpHexString(data);
+            KwbotSerial kwbotSerial = new KwbotSerial(oldMess);
+            switch(kwbotSerial.type()){
+                case SONAR:
+                    TheusbMessages.onStatus(String.valueOf(kwbotSerial.ultrasonic()));
+                    break;
+                case SOCKET:
+                    TheusbMessages.onStatus(kwbotSerial.val());
+                default:
+                    break;
+            }
+        }
     }
     @Override
     public void onNewData(byte[] data) {
