@@ -118,7 +118,7 @@ void loop(){
   //delay(1000);
   //testUSBOTG();
   socket.loop();
-  //distanceMeasure();
+  distanceMeasure();
   ReadOtg();
 }
 
@@ -135,10 +135,8 @@ void ReadOtg(){
   }
   
   if (stringComplete) {
-    Serial.println("Found!");
     if(inputString.indexOf("stop")>-1){
       Kwbot.Stop();
-      
     }
     // format is forward<speed>
     else if(inputString.indexOf("forward")>-1){
@@ -334,11 +332,11 @@ void OTGMessge(String info){
 
 void connecte(const char *payload, size_t length){
    connec = true;
-   Serial.println("the robot was registered success!!!");
+   //Serial.println("the robot was registered success!!!");
 }
 
 void play_test(const char *payload, size_t length){
-    Serial.println("playing the testing move...");
+    //Serial.println("playing the testing move...");
     pathTemplate();
     
 }

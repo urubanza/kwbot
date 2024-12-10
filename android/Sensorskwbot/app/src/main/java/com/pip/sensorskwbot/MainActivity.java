@@ -118,7 +118,7 @@ public class MainActivity extends CameraActivity {
         @Override
         public void onStatus(String message) {
             try{
-                webSocketClient.send(message);
+                //webSocketClient.send(message);
             }
             catch (Exception e){
                //Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
@@ -128,7 +128,7 @@ public class MainActivity extends CameraActivity {
         @Override
         public void onError(String message) {
             try{
-                webSocketClient.send(message);
+                //webSocketClient.send(message);
             }
             catch (Exception e){
                 //Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
@@ -139,7 +139,7 @@ public class MainActivity extends CameraActivity {
         @Override
         public void onWarning(String message) {
             try{
-                webSocketClient.send(message);
+                //webSocketClient.send(message);
             }
             catch (Exception e){
                 //Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
@@ -201,14 +201,11 @@ public class MainActivity extends CameraActivity {
                         @Override
                         public void run() {
                             lowLevelCom.read();
-//                            lowLevelCom.send(toSends[initials[0]]);
-//                            initials[0]++;
-//                            if(initials[0] >2) initials[0] = 0;
                         }
                     });
                 }
             };
-            theTimer.scheduleAtFixedRate(task,500,50);
+            theTimer.scheduleAtFixedRate(task,500,200);
         }
         else {
             usbMessages.onError("No Robot Found");
@@ -357,12 +354,13 @@ public class MainActivity extends CameraActivity {
 
 
                             if (!results.isEmpty()) {
-                                if(results.get(0).getConfidence()>0.7){
-                                    String theString = "Objects: " + results.size()
+                                String theString = " Person : " + results.size()
 
-                                            + " Confidendence : " + results.get(0).getConfidence();
+                                        + " Confidendence : " + results.get(0).getConfidence();
 
-                                    Log.d("&&&&",theString);
+                                Log.d("&&&&",theString);
+                                if(results.get(0).getConfidence()>0.6){
+                                    webSocketClient.send(theString);
                                 }
                                 pTimber.i(
                                         "Object: "
@@ -426,17 +424,6 @@ public class MainActivity extends CameraActivity {
 
         MagnetoTimer.update();
 
-        Timer magnetoMeterTimer = new Timer();
-        TimerTask TimingOfSends = new TimerTask() {
-            @Override
-            public void run() {
-                MagnetoTimer.update();
-
-            }
-        };
-
-        magnetoMeterTimer.scheduleAtFixedRate(TimingOfSends,500,500);
-
         return (Accelerometer!=null)
                 &&(Magnetometer!=null)
                 &&(Gyroscope!=null)
@@ -489,25 +476,22 @@ public class MainActivity extends CameraActivity {
                         Log.d("$$$$$",disply);
                     }
                     if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)||(event.values[2]>MAGNETO_MAGNETIC_REFS_MAX)){
-                        String toSend = "back<2.4>%";
-                        if(MagnetoTimer.ready()){
+                        MagnetoTimer.message("back<2.4>%");
+                        if(MagnetoTimer.vlid()){
                             Log.d("$%$%$%","HERE!!");
-                            webSocketClient.send(toSend);
-                            if(lowLevelCom!=null) lowLevelCom.send(toSend);
+                            if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
+                            Log.d("$$%%$$%%",MagnetoTimer.message());
                         }
 
-
-
-
-                        Log.d("$$%%$$%%",String.valueOf(event.values[2]));
                     }
                     else {
-                        webSocketClient.send("Perfect Direction");
-                        //Log.d("$$%%$$%%","Perfect!");
+                        MagnetoTimer.message("stop%");
+                        if(MagnetoTimer.vlid()){
+                            if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
+                            Log.d("$$%%$$%%",MagnetoTimer.message());
+                        }
                     }
-                    //if(event.values[0])
                 }
-                //messageView.setText(disply);
             }
 
             @Override
