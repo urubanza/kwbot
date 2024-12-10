@@ -56,6 +56,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.pip.sensorskwbot.filters.INSInterval.MAGNETO_MAGNETIC_REFS_MIN;
+
 public class MainActivity extends CameraActivity {
 
     ActivityMainBinding binding;
@@ -417,7 +419,7 @@ public class MainActivity extends CameraActivity {
             Log.e("Sensors", "Gyroscope is not available");
         }
 
-        Fmagneto = new INSInterval(0.3);
+        Fmagneto = new INSInterval(0.8);
 
         return (Accelerometer!=null)
                 &&(Magnetometer!=null)
@@ -466,8 +468,16 @@ public class MainActivity extends CameraActivity {
                         + " Y : " + event.values[1]
                         + " Z : " + event.values[2];
                 if(webSocketClient.isOpen()){
-                    if(Fmagneto.Sensed(event.values[0],event.values[1],event.values[2]))
+                    if(Fmagneto.Sensed(event.values[0],event.values[1],event.values[2])){
                         webSocketClient.send(disply);
+                        Log.d("$$$$$",disply);
+                    }
+                    if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)&&(event.values[2]>MAGNETO_MAGNETIC_REFS_MIN)){
+                        String toSend = "back<2.4>%";
+                        lowLevelCom.send(toSend);
+                        webSocketClient.send(toSend);
+                    }
+                    //if(event.values[0])
                 }
                 //messageView.setText(disply);
             }

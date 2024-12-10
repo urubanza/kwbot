@@ -122,58 +122,58 @@ void loop(){
   ReadOtg();
 }
 
+
 void ReadOtg(){
-	if(Serial.available()){
-		char inChar = (char)Serial.read();
-		if(inChar == '%'){
+  if(Serial.available()){
+    char inChar = (char)Serial.read();
+    if(inChar == '%'){
           stringComplete = true;
-        }
-        else {
-            inputString += inChar; // Append character to string
-        }
-	}
-	
-	if (stringComplete) {
-		
-		if(inputString=="stop"){
-			Kwbot.Stop();
-			Serial.println("Stoping");
-		}
-		// format is forward<speed>
-		else if(inputString.indexOf("forward")>-1){
-			int theSpeedStrt = inputString.indexOf("<");
-			int theSpeedEndl = inputString.indexOf(">");
-			String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
-			Serial.print("The Speed : ");
-			Serial.println(theSpeeds);
-			Serial.println("");
-		}
-		// format is back<speed>
-		else if(inputString.indexOf("back")>-1){
-			int theSpeedStrt = inputString.indexOf("<");
-			int theSpeedEndl = inputString.indexOf(">");
-			String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
-			Serial.print("The Speed : ");
-			Serial.println(theSpeeds);
-			Serial.println("");
-		}
-		// format is turn<speed>(dir)
-		else if(inputString.indexOf("turn")>-1){
-			int theSpeedStrt = inputString.indexOf("<");
-			int theSpeedEndl = inputString.indexOf(">");
-			String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
-			Serial.print("The Speed : ");
-			Serial.println(theSpeeds);
-			Serial.println("");
-			
-			int theDirStrt = inputString.indexOf("(");
-			int theDirEndl = inputString.indexOf(")");
-			String theDir = inputString.substring(theDirStrt,theDirEndl);
-			Serial.print("The Speed : ");
-			Serial.println(theDir);
-			Serial.println("");
-		}
-	}
+    }
+    else {
+       inputString += inChar; // Append character to string
+    }
+  }
+  
+  if (stringComplete) {
+    Serial.println("Found!");
+    if(inputString.indexOf("stop")>-1){
+      Kwbot.Stop();
+      
+    }
+    // format is forward<speed>
+    else if(inputString.indexOf("forward")>-1){
+      int theSpeedStrt = inputString.indexOf("<") + 1;
+      int theSpeedEndl = inputString.indexOf(">");
+      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+	  Kwbot.speed(theSpeeds.toDouble());
+	  Kwbot.forward();
+    }
+    // format is back<speed>
+    else if(inputString.indexOf("back")>-1){
+      int theSpeedStrt = inputString.indexOf("<") + 1;
+      int theSpeedEndl = inputString.indexOf(">");
+      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+	  Kwbot.speed(theSpeeds.toDouble());
+	  Kwbot.backward();
+    }
+    // format is turn<speed>(dir)
+    else if(inputString.indexOf("turn")>-1){
+      int theSpeedStrt = inputString.indexOf("<") + 1;
+      int theSpeedEndl = inputString.indexOf(">");
+      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+      
+      int theDirStrt = inputString.indexOf("(") + 1;
+      int theDirEndl = inputString.indexOf(")");
+      String theDir = inputString.substring(theDirStrt,theDirEndl);
+	  
+	  Kwbot.speed(theSpeeds.toDouble());
+	  Kwbot.turn(theDir.toDouble());
+	  
+    }
+      inputString = ""; // Clear the string for the next input
+      stringComplete = false;
+    
+  }
 }
 
 void testUSBOTG(){
