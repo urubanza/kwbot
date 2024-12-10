@@ -155,6 +155,7 @@ void ReadOtg(){
       String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
 	  Kwbot.speed(theSpeeds.toDouble());
 	  Kwbot.backward();
+	  OTGMessge(theSpeeds);
     }
     // format is turn<speed>(dir)
     else if(inputString.indexOf("turn")>-1){
