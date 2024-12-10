@@ -43,8 +43,15 @@ public class OuthActivity extends AppCompatActivity {
         businessIdInput = findViewById(R.id.business_id_input);
         passwordInput = findViewById(R.id.password_input);
         loginButton = findViewById(R.id.login_button);
+        TextView forgotPassword = findViewById(R.id.forgot_password);
 
         loginButton.setOnClickListener(v -> attemptLogin());
+
+        forgotPassword.setOnClickListener(v -> {
+            // Navigate to ForgotPasswordActivity when clicked
+            Intent intent = new Intent(OuthActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void attemptLogin() {
@@ -132,7 +139,7 @@ public class OuthActivity extends AppCompatActivity {
     private String parseErrorMessage(String response) {
         if (response == null) return "An unknown error occurred";
         if (response.contains("Invalid business ID or passkey"))
-            return "Invalid ID or Password combination. Try again.";
+            return "Invalid ID or Password combination. Please Try again.";
         if (response.contains("Maximum number of users reached"))
             return "Membership limit reached. Please wait or upgrade.";
         if (response.contains("Account is inactive"))
