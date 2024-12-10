@@ -118,7 +118,67 @@ void loop(){
   //delay(1000);
   //testUSBOTG();
   socket.loop();
+<<<<<<< HEAD
   distanceMeasure();
+=======
+  //distanceMeasure();
+  ReadOtg();
+}
+
+
+void ReadOtg(){
+  if(Serial.available()){
+    char inChar = (char)Serial.read();
+    if(inChar == '%'){
+          stringComplete = true;
+    }
+    else {
+       inputString += inChar; // Append character to string
+    }
+  }
+  
+  if (stringComplete) {
+    Serial.println("Found!");
+    if(inputString.indexOf("stop")>-1){
+      Kwbot.Stop();
+      
+    }
+    // format is forward<speed>
+    else if(inputString.indexOf("forward")>-1){
+      int theSpeedStrt = inputString.indexOf("<") + 1;
+      int theSpeedEndl = inputString.indexOf(">");
+      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+	  Kwbot.speed(theSpeeds.toDouble());
+	  Kwbot.forward();
+    }
+    // format is back<speed>
+    else if(inputString.indexOf("back")>-1){
+      int theSpeedStrt = inputString.indexOf("<") + 1;
+      int theSpeedEndl = inputString.indexOf(">");
+      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+	  Kwbot.speed(theSpeeds.toDouble());
+	  Kwbot.backward();
+	  OTGMessge(theSpeeds);
+    }
+    // format is turn<speed>(dir)
+    else if(inputString.indexOf("turn")>-1){
+      int theSpeedStrt = inputString.indexOf("<") + 1;
+      int theSpeedEndl = inputString.indexOf(">");
+      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
+      
+      int theDirStrt = inputString.indexOf("(") + 1;
+      int theDirEndl = inputString.indexOf(")");
+      String theDir = inputString.substring(theDirStrt,theDirEndl);
+	  
+	  Kwbot.speed(theSpeeds.toDouble());
+	  Kwbot.turn(theDir.toDouble());
+	  
+    }
+      inputString = ""; // Clear the string for the next input
+      stringComplete = false;
+    
+  }
+>>>>>>> f242df67b8d765393abebc72c044ef22a197ce9c
 }
 
 void testUSBOTG(){
@@ -244,7 +304,11 @@ void distanceMeasure(){
   // Convert to inches
   distanceInch = distanceCm * CM_TO_INCH;
 
+<<<<<<< HEAD
   if (distanceCm <= 15){
+=======
+  if (distanceCm > 0 && distanceCm <= 15){
+>>>>>>> f242df67b8d765393abebc72c044ef22a197ce9c
    Serial.print("#");
    Serial.print(distanceCm);
    Serial.print("%");
@@ -265,6 +329,15 @@ void robots(const char *payload, size_t length){
     String data_to_send;
     serializeJson(card_info,data_to_send);
     socket.emit("new_robots",string2char(data_to_send));
+}
+void OTGMessge(String info){
+    DynamicJsonDocument card_info(1024);
+    JsonArray array = card_info.to<JsonArray>();
+    JsonObject param1 = array.createNestedObject();
+    param1["received"] = info;
+    String data_to_send;
+    serializeJson(card_info,data_to_send);
+    socket.emit("newOTG",string2char(data_to_send));
 }
 
 void connecte(const char *payload, size_t length){
@@ -316,7 +389,7 @@ void playing(pathread bb){
 }
 
 void rotate(const char *payload, size_t length){
-  Kwbot.hindukira(true);
+  Kwbot.rotate(true);
 }
 
 void new_speed(const char *payload, size_t length){

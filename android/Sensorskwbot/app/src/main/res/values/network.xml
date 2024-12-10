@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="websocket_server">192.168.1.77</string>
+    <string name="websocket_port">8000</string>
+</resources>
