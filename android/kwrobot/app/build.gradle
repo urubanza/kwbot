@@ -48,6 +48,14 @@ dependencies {
     implementation('io.socket:socket.io-client:0.8.3') {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
+
+        implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+        // Gson converter for Retrofit
+        implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+        // OkHttp logging interceptor (optional but helpful for debugging)
+        implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
     }
     implementation 'tech.gusavila92:java-android-websocket-client:1.2.2'
     implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'

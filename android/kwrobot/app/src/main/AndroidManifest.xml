@@ -46,6 +46,10 @@
             android:label="Login"
             android:exported="true" />
 
+        <activity android:name=".ui.ForgotPasswordActivity" />
+        <activity android:name=".ui.ValidateOtpActivity" />
+
+
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
