@@ -318,6 +318,10 @@ io.on('connection', function (client) {
     client.on("UltraStop", function(msg){
         io.sockets.emit("joyStickStop",0);
     })
+
+    client.on("newOTG", function(msg){
+       console.log(msg);
+    })
 });
 
 server.listen(8080, () => {

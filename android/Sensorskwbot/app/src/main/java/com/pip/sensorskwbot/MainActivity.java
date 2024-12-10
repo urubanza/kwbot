@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pip.sensorskwbot.comminication.usb.ControlLines;
+import com.pip.sensorskwbot.comminication.usb.SerialTimers;
 import com.pip.sensorskwbot.comminication.usb.USB;
 import com.pip.sensorskwbot.comminication.usb.UsbDeviceIdentities;
 import com.pip.sensorskwbot.comminication.usb.UsbMessages;
@@ -56,6 +57,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.pip.sensorskwbot.filters.INSInterval.MAGNETO_MAGNETIC_REFS_MAX;
 import static com.pip.sensorskwbot.filters.INSInterval.MAGNETO_MAGNETIC_REFS_MIN;
 
 public class MainActivity extends CameraActivity {
@@ -79,6 +81,8 @@ public class MainActivity extends CameraActivity {
     private HandlerThread handlerThread;
 
     private INSInterval Fmagneto;
+
+    private SerialTimers MagnetoTimer;
 
 
     public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -188,9 +192,6 @@ public class MainActivity extends CameraActivity {
             lowLevelCom = new USB(this,ControllersId,usbMessages);
             usbMessages.onStatus("Connected to the Low Level Robot success!!");
             lowLevelCom.connect(this);
-            String[] toSends = {"forward%","back%","stop%"};
-            final int[] initials = {0};
-            //lowLevelCom.send("forward%");
             Timer theTimer = new Timer();
 
             TimerTask task = new TimerTask() {
@@ -421,6 +422,21 @@ public class MainActivity extends CameraActivity {
 
         Fmagneto = new INSInterval(0.8);
 
+        MagnetoTimer = new SerialTimers();
+
+        MagnetoTimer.update();
+
+        Timer magnetoMeterTimer = new Timer();
+        TimerTask TimingOfSends = new TimerTask() {
+            @Override
+            public void run() {
+                MagnetoTimer.update();
+
+            }
+        };
+
+        magnetoMeterTimer.scheduleAtFixedRate(TimingOfSends,500,500);
+
         return (Accelerometer!=null)
                 &&(Magnetometer!=null)
                 &&(Gyroscope!=null)
@@ -469,13 +485,25 @@ public class MainActivity extends CameraActivity {
                         + " Z : " + event.values[2];
                 if(webSocketClient.isOpen()){
                     if(Fmagneto.Sensed(event.values[0],event.values[1],event.values[2])){
-                        webSocketClient.send(disply);
+                        //webSocketClient.send(disply);
                         Log.d("$$$$$",disply);
                     }
-                    if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)&&(event.values[2]>MAGNETO_MAGNETIC_REFS_MIN)){
+                    if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)||(event.values[2]>MAGNETO_MAGNETIC_REFS_MAX)){
                         String toSend = "back<2.4>%";
-                        lowLevelCom.send(toSend);
-                        webSocketClient.send(toSend);
+                        if(MagnetoTimer.ready()){
+                            Log.d("$%$%$%","HERE!!");
+                            webSocketClient.send(toSend);
+                            if(lowLevelCom!=null) lowLevelCom.send(toSend);
+                        }
+
+
+
+
+                        Log.d("$$%%$$%%",String.valueOf(event.values[2]));
+                    }
+                    else {
+                        webSocketClient.send("Perfect Direction");
+                        //Log.d("$$%%$$%%","Perfect!");
                     }
                     //if(event.values[0])
                 }

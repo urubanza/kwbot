@@ -321,6 +321,15 @@ void robots(const char *payload, size_t length){
     serializeJson(card_info,data_to_send);
     socket.emit("new_robots",string2char(data_to_send));
 }
+void OTGMessge(String info){
+    DynamicJsonDocument card_info(1024);
+    JsonArray array = card_info.to<JsonArray>();
+    JsonObject param1 = array.createNestedObject();
+    param1["received"] = info;
+    String data_to_send;
+    serializeJson(card_info,data_to_send);
+    socket.emit("newOTG",string2char(data_to_send));
+}
 
 void connecte(const char *payload, size_t length){
    connec = true;
@@ -371,7 +380,7 @@ void playing(pathread bb){
 }
 
 void rotate(const char *payload, size_t length){
-  Kwbot.hindukira(true);
+  Kwbot.rotate(true);
 }
 
 void new_speed(const char *payload, size_t length){

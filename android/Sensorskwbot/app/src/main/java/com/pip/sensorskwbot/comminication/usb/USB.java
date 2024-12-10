@@ -133,7 +133,7 @@ public class USB implements SerialInputOutputManager.Listener{
     public static UsbDeviceIdentities scanDevice(Activity activity){
         UsbManager usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
         UsbDevice device = null;
-        Toast.makeText(activity.getApplicationContext(),"Number of found devices : "+usbManager.getDeviceList().size(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(activity.getApplicationContext(),"Number of found devices : "+usbManager.getDeviceList().size(),Toast.LENGTH_LONG).show();
         for(UsbDevice v : usbManager.getDeviceList().values()){
             device = v;
         }
@@ -146,7 +146,7 @@ public class USB implements SerialInputOutputManager.Listener{
             driver = CustomProber.getCustomProber().probeDevice(device);
         }
         if(driver == null) {
-            Toast.makeText(activity.getApplicationContext(),"connection failed: no driver for device",Toast.LENGTH_LONG).show();
+            //Toast.makeText(activity.getApplicationContext(),"connection failed: no driver for device",Toast.LENGTH_LONG).show();
             return null;
         }
 
@@ -158,7 +158,7 @@ public class USB implements SerialInputOutputManager.Listener{
 
     public static int scanDevicePort(Activity activity){
         UsbManager usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
-        Toast.makeText(activity.getApplicationContext(),"Number of found devices : "+usbManager.getDeviceList().size(),Toast.LENGTH_LONG).show();
+        //Toast.makeText(activity.getApplicationContext(),"Number of found devices : "+usbManager.getDeviceList().size(),Toast.LENGTH_LONG).show();
         for(UsbDevice v : usbManager.getDeviceList().values()){
             return v.getDeviceId();
         }
