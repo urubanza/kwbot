@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- OTP Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Enter OTP">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/otp_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:padding="8dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Validate OTP Button -->
+    <Button
+        android:id="@+id/validate_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Validate OTP" />
+
+</LinearLayout>
+
