@@ -196,7 +196,7 @@ public:
 			return p;
 		}
 	}
-	void  bazzerBip(unsigned short int);
+	void bazzerBip(unsigned short int);
 	void bazzerFade(unsigned short int,unsigned short int);
 	void bazzerBip();
 	void bazzerFade();

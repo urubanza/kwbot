@@ -3,13 +3,26 @@
 #include <ArduinoJson.h>
 #include"modules/settup.h"
 
-//define sound velocity in cm/uS
-#define SOUND_VELOCITY 0.034
-#define CM_TO_INCH 0.393701
+struct SONAR_INFO{
+    long duration,LAST_RECORD_TIME,LAST_RECORD_TIME_HIGH;
+    float distance;
+    unsigned short int TrigPin,echoPin;
+    unsigned short int CLEAR_MS,HIGH_MS;
+    const float SOUND_VELOCITY = 0.034;
+    bool LOW_WRITE = false, HIGH_WRITE = false;
+} SONAR;
 
-long duration;
-float distanceCm;
-float distanceInch;
+
+void SetupSonar(){
+    SONAR.TrigPin = 5;
+    SONAR.echoPin = 16;
+    SONAR.CLEAR_MS = 2;
+    SONAR.HIGH_MS = 10;
+    SONAR.LAST_RECORD_TIME = 0;
+    SONAR.LAST_RECORD_TIME_HIGH = 0;
+    pinMode(SONAR.TrigPin, OUTPUT);
+    pinMode(SONAR.echoPin, INPUT);
+}
 
 bool times = false;
 bool connec = false;
@@ -27,92 +40,59 @@ const int echoPin = 16;
 
 double currentTime = 0;
 
+void SetupMotors(){
+    motorRight->speedPort(14);
+    motorRight->input2(15);
+    motorRight->input1(13);
+    motorRight->diameter(90);
+    motorRight->type(1);
+    motorRight->minVoltage(0.68);
+    motorRight->maxVoltage(10);
+    motorRight->rpm(30);
+    motorRight->init();
+
+    motorLeft.speedPort() = 12;
+    motorLeft.input1() = 0;
+    motorLeft.input2() = 2;
+    motorLeft.diameter() = 90;
+    motorLeft.type(1);
+    motorLeft.minVoltage(0.68);
+    motorLeft.maxVoltage(10);
+    motorLeft.rpm(30);
+    motorLeft.init();
+
+    Kwbot.Motors(&motorLeft,motorRight).direction(90).speed(0).location(3).location(0,0,0).time(0);
+}
+
+void SetupSocket(){
+    socket.begin(socketServer, socketPort);
+    socket.on("connect",connecte);
+    socket.on("event",event);
+    socket.on("robots",robots);
+    socket.on("forward",forward);
+    socket.on("backward",backward);
+    socket.on("stop",stopR);
+    socket.on("turnleft",turnleft);
+    socket.on("turnright",turnright);
+    socket.on("play_test",play_test);
+    socket.on("joystick",joystick);
+    socket.on("joyStickStop",joyStickStop);
+    socket.on("playingPaths", playPath);
+    socket.on("rotate",rotate);
+    socket.on("speeds",new_speed);
+}
 
 
 void setup() {
-      Serial.begin(115200);
-
-
-     /*##############################################################################################################
-     * // start of network connectivity
-     ###############################################################################################################*/
-        //wifiCreate();
-        //wifiConnect();
-        connecting("CANALBOX-350A-2G","VpT4bsxuhs");
-     /*##############################################################################################################
-     *  // end of network connectivity
-     ###############################################################################################################*/
-  
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
-     
-      /*
-        initialization of the sensor pin infrared and Ultrasonic
-      */
-      //sens.infraredAnalogPin() = A0;
-      //sens.infraredMin() = 900;
-      //sens.ultrasonicMin(15);
-      //sens.UltrasonicPin(4,5);
-      //sens.ultrasonicMin(20);
-       /*
-        initialization of the Right Motor Pins and settings
-      */
-      motorRight->speedPort(14);
-      motorRight->input2(15);
-      motorRight->input1(13);
-      motorRight->diameter(90);
-      motorRight->type(1);
-      motorRight->minVoltage(0.68);
-      motorRight->maxVoltage(10);
-      motorRight->rpm(30);
-      motorRight->init();
-       /*
-        initialization of the left Motor Pins and settings
-      */
-      motorLeft.speedPort() = 12;
-      motorLeft.input1() = 0;
-      motorLeft.input2() = 2;
-      motorLeft.diameter() = 90;
-      motorLeft.type(1);
-      motorLeft.minVoltage(0.68);
-      motorLeft.maxVoltage(10);
-      motorLeft.rpm(30);
-      motorLeft.init();
-      
-      Kwbot.Motors(&motorLeft,motorRight).direction(90).speed(0).location(3).location(0,0,0).time(0);
-
-  
-    
-
-
-     /*##############################################################################################################
-     *  // Start of callback and event handler
-     ###############################################################################################################*/
-
-     socket.begin(socketServer, socketPort);     
-     socket.on("connect",connecte);
-     socket.on("event",event);
-     socket.on("robots",robots);
-     socket.on("forward",forward);
-     socket.on("backward",backward);
-     socket.on("stop",stopR);
-     socket.on("turnleft",turnleft);
-     socket.on("turnright",turnright);
-     socket.on("play_test",play_test);
-     socket.on("joystick",joystick);
-     socket.on("joyStickStop",joyStickStop);
-     socket.on("playingPaths", playPath);
-     socket.on("rotate",rotate);
-     socket.on("speeds",new_speed);
-
-     /*##############################################################################################################
-     *  // End of callback and event handler
-     ###############################################################################################################*/
+    Serial.begin(115200);
+    connecting("CANALBOX-350A-2G","VpT4bsxuhs");
+    SetupMotors();
+    SetupSocket();
+    SetupSonar();
 }
 
 String inputString = ""; // A string to hold incoming data
 bool stringComplete = false; // Whether the string is complete
-
 void loop(){
   //Serial.println("The Phone Reads");
   //delay(1000);
@@ -121,8 +101,6 @@ void loop(){
   distanceMeasure();
   ReadOtg();
 }
-
-
 void ReadOtg(){
   if(Serial.available()){
     char inChar = (char)Serial.read();
@@ -174,9 +152,8 @@ void ReadOtg(){
     
   }
 }
-
 void testUSBOTG(){
-  Kwbot.speed(2);
+      Kwbot.speed(2);
       if(Serial.available()){
         char inChar = (char)Serial.read();
         if(inChar == '%'){
@@ -186,7 +163,6 @@ void testUSBOTG(){
             inputString += inChar; // Append character to string
         }
       }
-
       if (stringComplete) {
           if(inputString=="forward"){
              Kwbot.forward();
@@ -205,113 +181,87 @@ void testUSBOTG(){
           stringComplete = false;
       }
 }
- /*##############################################################################################################
- *  // grobal function to convert from string to char pointer
- ###############################################################################################################*/
-
- void done(path nKwbot){
+void done(path nKwbot){
       Serial.println("done moving...");
-     //Kwbot.speed(0).forward().Stop();
-    //Kwbot.restartTimer(millis());
-    //Serial.println(nKwbot.msg());
-//    if(Kwbot.ended()){
-//      Serial.println("done the movement");
-//      Kwbot.speed(0).forward().Stop();
-//    } else {
-//      //playing(Kwbot.load(Kwbot.msg()).read(true));
-//    }
-    
+      Kwbot.speed(0).forward().Stop();
+      Kwbot.restartTimer(millis());
+      Serial.println(nKwbot.msg());
+      if(Kwbot.ended()){
+          Serial.println("done the movement");
+          Kwbot.speed(0).forward().Stop();
+      }
+      else {
+          playing(Kwbot.load(Kwbot.msg()).read(true));
+      }
  }
- void waiting(timer t){
+void waiting(timer t){
     Serial.println("progress:");
     Serial.println(t.progress(millis() - currentTime));
  }
 char* string2char(String command){
-    if(command.length()!=0){
-        char *p = const_cast<char*>(command.c_str());
-        return p;
-    }
+    char *p = const_cast<char*>(command.c_str());
+    return p;
 }
-
 void turnleft(const char *payload, size_t length){
   String subSpeed = String(payload).substring(0,4);
-  if(!times&&connec)
-    Kwbot.time(1).speed(subSpeed.toDouble()).TurnLeft();
-/*
-  else if(times)
-    Serial.println("there is a default path playing");
-  else if(!connec)
-    Serial.println("the robot is not connected");
-*/
-  
+  if(!times&&connec) Kwbot.time(1).speed(subSpeed.toDouble()).TurnLeft();
+  else if(times) Serial.println("there is a default path playing");
+  else if(!connec) Serial.println("the robot is not connected");
 }
-
 void turnright(const char *payload, size_t length){
     String subSpeed = String(payload).substring(0,4);
-    if(!times&&connec)
-      Kwbot.time(1).speed(subSpeed.toDouble()).TurnRight();
-  /*
-    else if(times)
-      Serial.println("there is a default path playing");
-    else if(!connec)
-      Serial.println("the robot is not connected");
-  */
+    if(!times&&connec) Kwbot.time(1).speed(subSpeed.toDouble()).TurnRight();
+    else if(times) Serial.println("there is a default path playing");
+    else if(!connec) Serial.println("the robot is not connected");
 }
-
 void forward(const char *payload, size_t length){
   String subSpeed = String(payload).substring(0,4); 
-  if(!times&&connec)
-    Kwbot.time(1).speed(subSpeed.toDouble()).forward();
-/*
-  else if(times)
-    Serial.println("there is a default path playing");
-  else if(!connec)
-    Serial.println("the robot is not connected");
-*/
-    
+  if(!times&&connec) Kwbot.time(1).speed(subSpeed.toDouble()).forward();
+  else if(times) Serial.println("there is a default path playing");
+  else if(!connec) Serial.println("the robot is not connected");
 }
 void backward(const char *payload, size_t length){
   String subSpeed = String(payload).substring(0,4);
-  if(!times&&connec)
-    Kwbot.time(1).speed(subSpeed.toDouble()).backward();
-/*
-  else if(times)
-    Serial.println("there is a default path playing");
-  else if(!connec)
-    Serial.println("the robot is not connected");
-*/
+  if(!times&&connec) Kwbot.time(1).speed(subSpeed.toDouble()).backward();
+  else if(times) Serial.println("there is a default path playing");
+  else if(!connec) Serial.println("the robot is not connected");
 }
-
 void stopR(const char *payload, size_t length){
     String subSpeed = String(payload).substring(0,4);
     Kwbot.time(1).speed(0).forward().Stop();
 }
 
+bool SonarLowReady(long time_elapsed){
+    return ((time_elapsed - SONAR.LAST_RECORD_TIME) > SONAR.CLEAR_MS)&&((time_elapsed - SONAR.LAST_RECORD_TIME_HIGH) < SONAR.HIGH_MS);
+}
 
+bool SonarHighReady(long time_elapsed){
+    return (time_elapsed - SONAR.LAST_RECORD_TIME_HIGH) > SONAR.HIGH_MS;
+}
 void distanceMeasure(){
-  // Clears the trigPin
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
-  
-  // Calculate the distance
-  distanceCm = duration * SOUND_VELOCITY/2;
-  
-  // Convert to inches
-  distanceInch = distanceCm * CM_TO_INCH;
+    digitalWrite(SONAR.TrigPin,LOW);
+    long time_elapsed = millis();
+    if(SonarLowReady(time_elapsed)){
+        if(!SONAR.LOW_WRITE){
+            SONAR.LAST_RECORD_TIME = time_elapsed;
+            digitalWrite(SONAR.TrigPin,HIGH);
+            SONAR.LOW_WRITE = true;
+        }
+    }
+    else if(SonarHighReady(time_elapsed)){
+        SONAR.LAST_RECORD_TIME_HIGH = time_elapsed;
+        SONAR.LOW_WRITE = false;
+        digitalWrite(SONAR.TrigPin,LOW);
+        SONAR.duration = pulseIn(SONAR.echoPin, HIGH);
+        SONAR.distance = SONAR.duration * SONAR.SOUND_VELOCITY/2;
 
-  if (distanceCm > 0 && distanceCm <= 15){
-   Serial.print("#");
-   Serial.print(distanceCm);
-   Serial.print("%");
-   delay(100);
-  }
+        if (SONAR.distance > 0 && SONAR.distance <= 10){
+            Serial.print("#");
+            Serial.print(SONAR.distance);
+            Serial.print("%");
+            delay(100);
+        }
+    }
 }
 
 void event(const char *payload, size_t length){

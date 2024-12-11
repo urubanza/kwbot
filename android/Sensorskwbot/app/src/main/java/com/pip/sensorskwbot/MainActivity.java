@@ -205,7 +205,7 @@ public class MainActivity extends CameraActivity {
                     });
                 }
             };
-            theTimer.scheduleAtFixedRate(task,500,200);
+            //theTimer.scheduleAtFixedRate(task,500,200);
         }
         else {
             usbMessages.onError("No Robot Found");
@@ -476,10 +476,11 @@ public class MainActivity extends CameraActivity {
                         Log.d("$$$$$",disply);
                     }
                     if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)||(event.values[2]>MAGNETO_MAGNETIC_REFS_MAX)){
-                        MagnetoTimer.message("back<2.4>%");
+                        MagnetoTimer.message("back<0.7>%");
                         if(MagnetoTimer.vlid()){
                             Log.d("$%$%$%","HERE!!");
                             if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
+                            else webSocketClient.send("No Usb Found!");
                             Log.d("$$%%$$%%",MagnetoTimer.message());
                         }
 
@@ -488,8 +489,10 @@ public class MainActivity extends CameraActivity {
                         MagnetoTimer.message("stop%");
                         if(MagnetoTimer.vlid()){
                             if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
+                            else webSocketClient.send("No Usb Found!");
                             Log.d("$$%%$$%%",MagnetoTimer.message());
                         }
+
                     }
                 }
             }
