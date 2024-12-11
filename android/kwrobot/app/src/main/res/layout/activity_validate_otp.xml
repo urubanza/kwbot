@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
@@ -14,7 +14,7 @@
         android:layout_width="129dp"
         android:layout_height="129dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="0dp"
         android:scaleType="centerInside"
         android:src="@drawable/kwabot_logo" />
 
@@ -38,8 +38,7 @@
         app:boxStrokeWidth="2dp"
         app:boxStrokeColor="@color/black">
 
-
-    <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/otp_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,6 +48,17 @@
             android:textColor="@android:color/black"
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Countdown Timer -->
+    <TextView
+        android:id="@+id/countdown_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time remaining: 03:00"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp" />
 
     <!-- Validate OTP Button -->
     <Button
@@ -60,7 +70,34 @@
         android:padding="12dp"
         android:text="Validate OTP"
         android:textAllCaps="false"
-        android:textColor="@color/white" />
- </LinearLayout>
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
 
+    <!-- Resend OTP Button -->
 
+    <Button
+        android:id="@+id/resend_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/baseline_change_circle_24"
+        android:drawableLeft="@drawable/baseline_change_circle_24"
+        android:background="@drawable/header_background"
+        android:elevation="4dp"
+        android:padding="12dp"
+        android:text="Resend OTP"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/go_back_outh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/baseline_arrow_back_ios_24"
+        android:drawableStart="@drawable/baseline_arrow_back_ios_24"
+        android:text="Go back to login"
+        android:textSize="16sp"
+        android:textColor="@color/dark_blue"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp" />
+
+</LinearLayout>

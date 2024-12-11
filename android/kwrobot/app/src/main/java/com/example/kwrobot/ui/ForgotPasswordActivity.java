@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +36,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         // Set click listener for the submit button
         submitButton.setOnClickListener(v -> attemptToSendOtp());
+
+        // Go back to the OuthActivity when the "Go back to login" text is clicked
+        TextView goBackToLogin = findViewById(R.id.go_back_outh);
+        goBackToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(ForgotPasswordActivity.this, OuthActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void attemptToSendOtp() {
