@@ -44,15 +44,22 @@ androidServer.server(8000, function(android){
             console.log("No Robot Yet!");
         }
         else{
-            console.log(the_message);
+
             try{
                 var info = JSON.parse(the_message);
-                writeJoyStick(io,info);
+                console.log(info);
+                if(info.stop){
+                    console.log(info);
+                    if(info.stop=="stop") stopRobot(GROBAL_IO);
+                    else GROBAL_IO.sockets.emit("forward","2.234235");
+                } else {
+                    writeJoyStick(GROBAL_IO,info);
+                }
             }
             catch(e){
-                console.log(e);
+                console.log("Failed to decode JSON : ");
+                console.log(the_message);
             }
-            
         } 
     });
 

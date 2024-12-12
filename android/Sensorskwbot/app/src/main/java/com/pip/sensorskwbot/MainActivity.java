@@ -33,6 +33,7 @@ import com.pip.sensorskwbot.customview.OverlayView;
 import com.pip.sensorskwbot.env.BorderedText;
 import com.pip.sensorskwbot.env.ImageUtils;
 import com.pip.sensorskwbot.filters.INSInterval;
+import com.pip.sensorskwbot.modes.oBjectFollower;
 import com.pip.sensorskwbot.tracking.MultiBoxTracker;
 import com.pip.sensorskwbot.utils.CameraUtils;
 import com.pip.sensorskwbot.utils.Enums;
@@ -113,6 +114,8 @@ public class MainActivity extends CameraActivity {
     private USB lowLevelCom;
 
     private static UsbDeviceIdentities ControllersId;
+
+    private oBjectFollower oBjectFollower = new oBjectFollower();
 
     private UsbMessages usbMessages = new UsbMessages() {
         @Override
@@ -341,58 +344,23 @@ public class MainActivity extends CameraActivity {
                             canvas.drawBitmap(bitmap, frameToCropTransform, null);
                         }
 
-                        if (detector != null) {
+                        if(detector==null) return;
 
-                            pTimber.d("Running detection on image %s", String.valueOf(frameNum));
-                            final long startTime = SystemClock.elapsedRealtime();
-                            final List<Detector.Recognition> results =
-                                    detector.recognizeImage(croppedBitmap, classType);
-                            lastProcessingTimeMs = SystemClock.elapsedRealtime() - startTime;
-
-
-
-                            if (!results.isEmpty()) {
-                                String theString = " Person : " + results.size()
-
-                                        + " Confidendence : " + results.get(0).getConfidence();
-
-
-
-
-                                Log.d("&&&&",theString);
-                                if(results.get(0).getConfidence()>0.6){
-                                    if(Magnetometer!=null){
-                                        MagnetoTimer.message("forward<0.9>%");
-                                        if(MagnetoTimer.vlid()){
-                                            Log.d("$%$%$%","HERE!!");
-                                            if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
-                                            else webSocketClient.send("No Usb Found!");
-                                            Log.d("$$%%$$%%",MagnetoTimer.message());
-                                        }
-                                    }
-                                }
-                                else {
-                                    if(Magnetometer!=null) {
-                                        MagnetoTimer.message("stop%");
-                                        if (MagnetoTimer.vlid()) {
-                                            Log.d("$%$%$%", "HERE!!");
-                                            if (lowLevelCom != null)
-                                                lowLevelCom.send(MagnetoTimer.message());
-                                            else webSocketClient.send("No Usb Found!");
-                                            Log.d("$$%%$$%%", MagnetoTimer.message());
-                                        }
-                                    }
-                                }
-                                pTimber.i(
-                                        "Object: "
-                                                + results.get(0).getLocation().centerX()
-                                                + ", "
-                                                + results.get(0).getLocation().centerY()
-                                                + ", "
-                                                + results.get(0).getLocation().height()
-                                                + ", "
-                                                + results.get(0).getLocation().width());
+                        final long startTime = SystemClock.elapsedRealtime();
+                        oBjectFollower
+                                .read(detector,croppedBitmap);
+                        lastProcessingTimeMs = SystemClock.elapsedRealtime() - startTime;
+                        if(oBjectFollower.filter().found()){
+                            if(oBjectFollower.total()==1){
+                                oBjectFollower.Motor(lowLevelCom).run(webSocketClient);
                             }
+                            else {
+                                oBjectFollower.Motor(lowLevelCom).stop(webSocketClient);
+                            }
+                        }
+                        else {
+                            oBjectFollower.Motor(lowLevelCom).stop(webSocketClient);
+                        }
 
                             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
                             final Canvas canvas1 = new Canvas(cropCopyBitmap);
@@ -403,7 +371,7 @@ public class MainActivity extends CameraActivity {
 
                             final List<Detector.Recognition> mappedRecognitions = new LinkedList<>();
 
-                            for (final Detector.Recognition result : results) {
+                            for (final Detector.Recognition result : oBjectFollower.results()) {
                                 final RectF location = result.getLocation();
                                 if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
                                     canvas1.drawRect(location, paint);
@@ -415,7 +383,81 @@ public class MainActivity extends CameraActivity {
 
                             tracker.trackResults(mappedRecognitions, frameNum);
                             binding.trackingOverlay.postInvalidate();
-                        }
+
+//                        if (detector != null) {
+//                            pTimber.d("Running detection on image %s", String.valueOf(frameNum));
+//
+//                            final List<Detector.Recognition> results =
+//                                    detector.recognizeImage(croppedBitmap, classType);
+//                            lastProcessingTimeMs = SystemClock.elapsedRealtime() - startTime;
+//
+//
+//
+//                            if (!results.isEmpty()) {
+//                                String theString = " Person : " + results.size()
+//
+//                                        + " Confidendence : " + results.get(0).getConfidence();
+//
+//
+//
+//
+//                                Log.d("&&&&",theString);
+//                                if(results.get(0).getConfidence()>0.6){
+//                                    if(Magnetometer!=null){
+//                                        MagnetoTimer.message("forward<0.9>%");
+//                                        if(MagnetoTimer.vlid()){
+//                                            Log.d("$%$%$%","HERE!!");
+//                                            if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
+//                                            else webSocketClient.send("No Usb Found!");
+//                                            Log.d("$$%%$$%%",MagnetoTimer.message());
+//                                        }
+//                                    }
+//                                }
+//                                else {
+//                                    if(Magnetometer!=null) {
+//                                        MagnetoTimer.message("stop%");
+//                                        if (MagnetoTimer.vlid()) {
+//                                            Log.d("$%$%$%", "HERE!!");
+//                                            if (lowLevelCom != null)
+//                                                lowLevelCom.send(MagnetoTimer.message());
+//                                            else webSocketClient.send("No Usb Found!");
+//                                            Log.d("$$%%$$%%", MagnetoTimer.message());
+//                                        }
+//                                    }
+//                                }
+//                                pTimber.i(
+//                                        "Object: "
+//                                                + results.get(0).getLocation().centerX()
+//                                                + ", "
+//                                                + results.get(0).getLocation().centerY()
+//                                                + ", "
+//                                                + results.get(0).getLocation().height()
+//                                                + ", "
+//                                                + results.get(0).getLocation().width());
+//                            }
+//
+//                            cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
+//                            final Canvas canvas1 = new Canvas(cropCopyBitmap);
+//                            final Paint paint = new Paint();
+//                            paint.setColor(Color.RED);
+//                            paint.setStyle(Paint.Style.STROKE);
+//                            paint.setStrokeWidth(2.0f);
+//
+//                            final List<Detector.Recognition> mappedRecognitions = new LinkedList<>();
+//
+//                            for (final Detector.Recognition result : results) {
+//                                final RectF location = result.getLocation();
+//                                if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+//                                    canvas1.drawRect(location, paint);
+//                                    cropToFrameTransform.mapRect(location);
+//                                    result.setLocation(location);
+//                                    mappedRecognitions.add(result);
+//                                }
+//                            }
+//
+//                            tracker.trackResults(mappedRecognitions, frameNum);
+//                            binding.trackingOverlay.postInvalidate();
+//                        }
 
                         computingNetwork = false;
                     });
