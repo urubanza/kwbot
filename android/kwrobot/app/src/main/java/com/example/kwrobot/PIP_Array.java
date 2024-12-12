@@ -84,13 +84,13 @@ public class PIP_Array {
             try{
                 Arr[0][0] = AV.getJSONObject(0).getString(this.keys[0]);
             } catch (JSONException err){
-                Log.d("bag JSON given:", err.getMessage()+this.keys.length);
+                Log.d("BD_JSON:", err.getMessage()+this.keys.length);
             }
             for(int j=1; j<this.keys.length;j++){
                 try{
                     Arr[0] = this.add(j,Arr[0],AV.getJSONObject(0).getString(this.keys[j]));
                 } catch (JSONException err){
-                    Log.d("bad JSON given on "+j+" :",err.getMessage());
+                    Log.d("BD_JSON:",err.getMessage());
                 }
             }
         }
@@ -100,7 +100,7 @@ public class PIP_Array {
                 try{
                     arr = this.add(Arr[i-1],AV.getJSONObject(i).getString(this.keys[j]));
                 } catch (JSONException e){
-                    Log.d("bad json given on ["+i+"]["+j+"]", e.getMessage());
+                    Log.d("BD_JSON", e.getMessage());
                 }
             }
             Arr = this.add(i,Arr,arr);

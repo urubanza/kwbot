@@ -155,7 +155,6 @@ public class MainActivity extends CameraActivity {
     }
 
     private boolean SocketConnected = false;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,7 +181,6 @@ public class MainActivity extends CameraActivity {
 
 
     }
-
     private void connectRobot(){
 
 
@@ -358,9 +356,32 @@ public class MainActivity extends CameraActivity {
 
                                         + " Confidendence : " + results.get(0).getConfidence();
 
+
+
+
                                 Log.d("&&&&",theString);
                                 if(results.get(0).getConfidence()>0.6){
-                                    webSocketClient.send(theString);
+                                    if(Magnetometer!=null){
+                                        MagnetoTimer.message("forward<0.9>%");
+                                        if(MagnetoTimer.vlid()){
+                                            Log.d("$%$%$%","HERE!!");
+                                            if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
+                                            else webSocketClient.send("No Usb Found!");
+                                            Log.d("$$%%$$%%",MagnetoTimer.message());
+                                        }
+                                    }
+                                }
+                                else {
+                                    if(Magnetometer!=null) {
+                                        MagnetoTimer.message("stop%");
+                                        if (MagnetoTimer.vlid()) {
+                                            Log.d("$%$%$%", "HERE!!");
+                                            if (lowLevelCom != null)
+                                                lowLevelCom.send(MagnetoTimer.message());
+                                            else webSocketClient.send("No Usb Found!");
+                                            Log.d("$$%%$$%%", MagnetoTimer.message());
+                                        }
+                                    }
                                 }
                                 pTimber.i(
                                         "Object: "
@@ -475,8 +496,8 @@ public class MainActivity extends CameraActivity {
                         //webSocketClient.send(disply);
                         Log.d("$$$$$",disply);
                     }
-                    if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)||(event.values[2]>MAGNETO_MAGNETIC_REFS_MAX)){
-                        MagnetoTimer.message("back<0.7>%");
+                    if((event.values[2]< MAGNETO_MAGNETIC_REFS_MIN)){
+                        MagnetoTimer.message("back<0.9>%");
                         if(MagnetoTimer.vlid()){
                             Log.d("$%$%$%","HERE!!");
                             if(lowLevelCom!=null) lowLevelCom.send(MagnetoTimer.message());
@@ -534,7 +555,6 @@ public class MainActivity extends CameraActivity {
     protected Network.Device getDevice() {
         return device;
     }
-
     private void setDevice(Network.Device device) {
         if (this.device != device) {
             pTimber.d("Updating  device: %s", device.name());
@@ -544,7 +564,6 @@ public class MainActivity extends CameraActivity {
             onInferenceConfigurationChanged();
         }
     }
-
     protected int getNumThreads() {
         return numThreads;
     }
@@ -556,7 +575,6 @@ public class MainActivity extends CameraActivity {
             onInferenceConfigurationChanged();
         }
     }
-
     protected void onInferenceConfigurationChanged() {
         computingNetwork = false;
         if (croppedBitmap == null) {
@@ -573,13 +591,11 @@ public class MainActivity extends CameraActivity {
             }
         });
     }
-
     protected synchronized void runInBackground(final Runnable r) {
         if (handler != null) {
             handler.post(r);
         }
     }
-
     @Override
     public synchronized void onResume() {
         croppedBitmap = null;
@@ -601,7 +617,6 @@ public class MainActivity extends CameraActivity {
         }
         super.onPause();
     }
-
     private void setNetworkEnabled(boolean b) {
         resetFpsUi();
         if(!b){
@@ -613,25 +628,15 @@ public class MainActivity extends CameraActivity {
             },Math.max(lastProcessingTimeMs, 50));
         }
     }
-
-
-
     @Override
     public void onRemoveModel(String model) {
-
     }
-
     @Override
     public void onConnectionEstablished(String ipAddress) {
-
     }
-
     @Override
     public void onServerListChange(Set<String> servers) {
-
     }
-
-
     private void connectWebSocket() {
         URI uri;
         Toast.makeText(this," Connecting to : " + ServerUrl() ,Toast.LENGTH_LONG).show();
@@ -682,7 +687,6 @@ public class MainActivity extends CameraActivity {
 
         webSocketClient.connect();
     }
-
     private String ServerUrl(){
         return "ws://"+this.getString(R.string.websocket_server) + ":" + this.getString(R.string.websocket_port);
     }

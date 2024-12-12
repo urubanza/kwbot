@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import org.java_websocket.client.WebSocketClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,9 +21,13 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import kwbotControler.DrawLineCanvas;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -104,6 +109,8 @@ public class JoyStick extends AppCompatActivity {
         }
     };
 
+    private WebSocketClient webSocketClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,9 +148,64 @@ public class JoyStick extends AppCompatActivity {
 
         try{
             Thread.sleep(100);
-        } catch (InterruptedException e){
+        }
+        catch (InterruptedException e){
             e.printStackTrace();
         }
+        connectWebSocket();
+    }
+
+    private void connectWebSocket() {
+        URI uri;
+        Toast.makeText(this," Connecting to : " + ServerUrl() ,Toast.LENGTH_LONG).show();
+        try {
+            uri = new URI(ServerUrl() ); // Replace <PC_IP> with the PC's IP address
+            //Toast.makeText(this,"Conneting to : "+ uri.toASCIIString(),Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this,"Failed : "+ e.getMessage(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            Log.d("SXSXSSSS",e.getMessage());
+            return;
+        }
+
+        webSocketClient = new WebSocketClient(uri) {
+            @Override
+            public void onOpen(ServerHandshake handshakedata) {
+                runOnUiThread(() -> {
+                    Log.d("SXSXSSSS","Connected to server");
+                });
+            }
+
+            @Override
+            public void onMessage(String message) {
+                runOnUiThread(() -> {
+                    System.out.println("Server says: " + message);
+                    Log.d("SXSXSSSS","Server says: " + message);
+                });
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                runOnUiThread(() -> {
+                    Log.d("SXSXSSSS","Connection closed");
+                    System.out.println("Connection closed");
+                });
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                runOnUiThread(() -> {
+                    System.out.println("Error: " + ex.getMessage());
+                    Log.d("SXSXSSSS",ex.getMessage());
+                });
+            }
+        };
+
+        webSocketClient.connect();
+    }
+
+    private String ServerUrl(){
+        return "ws://192.168.1.77:8000";
     }
 
     private void findJoyStick(){
