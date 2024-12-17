@@ -76,9 +76,8 @@ motors motors::back(double speed, float duration) {
 }
 
 unsigned short int motors::speedTo8bit(double one) {
-	double rets = (one / 1.33) * DAC_RESOLUTION;
-	motors::DAC_VALUE = int(rets);
-	return motors::DAC_VALUE;
+	double rets = (one / 1.33)*1023;
+	return int(rets);
 }
 
 motors motors::init() {

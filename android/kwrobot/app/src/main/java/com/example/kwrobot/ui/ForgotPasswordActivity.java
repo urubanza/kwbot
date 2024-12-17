@@ -1,10 +1,10 @@
 package com.example.kwrobot.ui;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +22,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private EditText businessIdInput, emailInput;
     private Button submitButton;
+    private ProgressDialog progressDialog;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -33,6 +34,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         businessIdInput = findViewById(R.id.business_id_input);
         emailInput = findViewById(R.id.email_input);
         submitButton = findViewById(R.id.submit_button);
+
+        // Initialize the ProgressDialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
 
         // Set click listener for the submit button
         submitButton.setOnClickListener(v -> attemptToSendOtp());
@@ -47,9 +53,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void attemptToSendOtp() {
-        // Get input values
-        String businessId = businessIdInput.getText().toString();
-        String email = emailInput.getText().toString();
+        String businessId = businessIdInput.getText().toString().trim();
+        String email = emailInput.getText().toString().trim();
 
         // Check if inputs are valid
         if (businessId.isEmpty() || email.isEmpty()) {
@@ -57,12 +62,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
+        // Show ProgressDialog
+        progressDialog.show();
+
         // Start background thread for sending OTP
         new Thread(() -> {
+            HttpURLConnection conn = null;
             try {
                 // Set up the URL for sending the OTP request
                 URL url = new URL("http://192.168.1.65:8080/ukwaandabot_v1.1/CpyForgotPassword");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; utf-8");
                 conn.setRequestProperty("Accept", "application/json");
@@ -77,34 +86,39 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 writer.flush();
                 writer.close();
 
-                // Get the response code from the server
+                // Get the response code
                 int responseCode = conn.getResponseCode();
 
-                // Handle server response
-                if (responseCode == 200) {
-                    // OTP sent successfully
-                    runOnUiThread(() -> {
+                runOnUiThread(() -> {
+                    progressDialog.dismiss(); // Hide ProgressDialog
+                    if (responseCode == 200) {
+                        // OTP sent successfully
                         showToast("OTP sent to your email.");
-                        // Proceed to OTP validation activity
                         Intent intent = new Intent(ForgotPasswordActivity.this, ValidateOtpActivity.class);
                         intent.putExtra("business_id", businessId);
                         intent.putExtra("email", email);
                         startActivity(intent);
-                    });
-                } else {
-                    // Invalid response or error
-                    runOnUiThread(() -> showToast("Invalid Business ID or Email"));
-                }
+                        finish();
+                    } else {
+                        // Invalid response
+                        showToast("Invalid Business ID or Email. Please try again.");
+                    }
+                });
             } catch (Exception e) {
-                // Handle any exceptions during the network operation
-                Log.e("HTTP_ERROR", "Error: " + e.getMessage(), e);
-                runOnUiThread(() -> showToast("An error occurred while sending OTP."));
+                Log.e("ForgotPasswordError", "Error occurred: " + e.getMessage(), e);
+                runOnUiThread(() -> {
+                    progressDialog.dismiss(); // Hide ProgressDialog
+                    showToast("An error occurred. Please check your network and try again.");
+                });
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
             }
         }).start();
     }
 
     private void showToast(String message) {
-        // Show a toast message
         Toast.makeText(ForgotPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }

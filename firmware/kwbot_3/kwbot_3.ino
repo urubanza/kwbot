@@ -3,13 +3,6 @@
 #include <ArduinoJson.h>
 #include"modules/settup.h"
 
-//define sound velocity in cm/uS
-#define SOUND_VELOCITY 0.034
-#define CM_TO_INCH 0.393701
-
-long duration;
-float distanceCm;
-float distanceInch;
 
 bool times = false;
 bool connec = false;
@@ -20,11 +13,6 @@ motors motorLeft = motors();
 path Kwbot = path();
 SocketIoClient socket;
 
-//Ultrasonic sensors pin
-const int trigPin = 5;
-const int echoPin = 16;
-
-
 double currentTime = 0;
 
 
@@ -33,18 +21,16 @@ void setup() {
       Serial.begin(115200);
 
 
-     /*##############################################################################################################
+      /*##############################################################################################################
      * // start of network connectivity
      ###############################################################################################################*/
         //wifiCreate();
         //wifiConnect();
-        connecting("CANALBOX-350A-2G","VpT4bsxuhs");
+        connecting("Didy Cub","Didy1234");
      /*##############################################################################################################
      *  // end of network connectivity
      ###############################################################################################################*/
-  
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+
      
       /*
         initialization of the sensor pin infrared and Ultrasonic
@@ -79,7 +65,7 @@ void setup() {
       motorLeft.rpm(30);
       motorLeft.init();
       
-      Kwbot.Motors(&motorLeft,motorRight).direction(90).speed(0).location(3).location(0,0,0).time(0);
+      Kwbot.Motors(motorRight,&motorLeft).direction(90).speed(0).location(3).location(0,0,0).time(0);
 
   
     
@@ -110,106 +96,27 @@ void setup() {
      ###############################################################################################################*/
 }
 
-String inputString = ""; // A string to hold incoming data
-bool stringComplete = false; // Whether the string is complete
-
 void loop(){
-  //Serial.println("The Phone Reads");
-  //delay(1000);
-  //testUSBOTG();
-  socket.loop();
-<<<<<<< HEAD
-  distanceMeasure();
-=======
-  //distanceMeasure();
-  ReadOtg();
-}
+//  Kwbot.speed(1.3).hindukira(true);
+//  delay(1000);
+//  Kwbot.speed(1.3).hindukira(false);
+//  delay(1000);
+    currentTime = millis();
+    socket.loop();
+    //pathTemplate();
+    //Kwbot.forward().time(1000).speed(1.3);
+//    Kwbot
+//      .speed(1.4)
+//      .time(10000)
+//      .forward()
+//      .ready(millis(),done,waiting);
 
-
-void ReadOtg(){
-  if(Serial.available()){
-    char inChar = (char)Serial.read();
-    if(inChar == '%'){
-          stringComplete = true;
-    }
-    else {
-       inputString += inChar; // Append character to string
-    }
-  }
-  
-  if (stringComplete) {
-    Serial.println("Found!");
-    if(inputString.indexOf("stop")>-1){
-      Kwbot.Stop();
-      
-    }
-    // format is forward<speed>
-    else if(inputString.indexOf("forward")>-1){
-      int theSpeedStrt = inputString.indexOf("<") + 1;
-      int theSpeedEndl = inputString.indexOf(">");
-      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
-	  Kwbot.speed(theSpeeds.toDouble());
-	  Kwbot.forward();
-    }
-    // format is back<speed>
-    else if(inputString.indexOf("back")>-1){
-      int theSpeedStrt = inputString.indexOf("<") + 1;
-      int theSpeedEndl = inputString.indexOf(">");
-      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
-	  Kwbot.speed(theSpeeds.toDouble());
-	  Kwbot.backward();
-	  OTGMessge(theSpeeds);
-    }
-    // format is turn<speed>(dir)
-    else if(inputString.indexOf("turn")>-1){
-      int theSpeedStrt = inputString.indexOf("<") + 1;
-      int theSpeedEndl = inputString.indexOf(">");
-      String theSpeeds = inputString.substring(theSpeedStrt,theSpeedEndl);
-      
-      int theDirStrt = inputString.indexOf("(") + 1;
-      int theDirEndl = inputString.indexOf(")");
-      String theDir = inputString.substring(theDirStrt,theDirEndl);
-	  
-	  Kwbot.speed(theSpeeds.toDouble());
-	  Kwbot.turn(theDir.toDouble());
-	  
-    }
-      inputString = ""; // Clear the string for the next input
-      stringComplete = false;
     
-  }
->>>>>>> f242df67b8d765393abebc72c044ef22a197ce9c
-}
-
-void testUSBOTG(){
-  Kwbot.speed(2);
-      if(Serial.available()){
-        char inChar = (char)Serial.read();
-        if(inChar == '%'){
-          stringComplete = true;
-        }
-        else {
-            inputString += inChar; // Append character to string
-        }
-      }
-
-      if (stringComplete) {
-          if(inputString=="forward"){
-             Kwbot.forward();
-          }
-          else if(inputString=="back"){
-             Kwbot.backward();
-          }
-          else if(inputString=="stop"){
-             Kwbot.Stop();
-          }
-          else{
-             Serial.println("Received: " + inputString); // For debugging
-          } 
-          //decodeString(inputString); // Call decode function
-          inputString = ""; // Clear the string for the next input
-          stringComplete = false;
-      }
+//    if(!times){
+//      //pathread New =  Kwbot.load("<(90-2.3){1.3-2.3}[0-0]><(40-5){1.6-5}[7-1]>").read(true);
+//      //Serial.println(Kwbot.load("<(90-2.3){1.3-2.3}[0-0]><(40-5){1.6-5}[7-1]>").read(true).speed);
+//    }
+//    times = true;
 }
  /*##############################################################################################################
  *  // grobal function to convert from string to char pointer
@@ -285,37 +192,6 @@ void stopR(const char *payload, size_t length){
     Kwbot.time(1).speed(0).forward().Stop();
 }
 
-
-void distanceMeasure(){
-  // Clears the trigPin
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
-  
-  // Calculate the distance
-  distanceCm = duration * SOUND_VELOCITY/2;
-  
-  // Convert to inches
-  distanceInch = distanceCm * CM_TO_INCH;
-
-<<<<<<< HEAD
-  if (distanceCm <= 15){
-=======
-  if (distanceCm > 0 && distanceCm <= 15){
->>>>>>> f242df67b8d765393abebc72c044ef22a197ce9c
-   Serial.print("#");
-   Serial.print(distanceCm);
-   Serial.print("%");
-   delay(100);
-  }
-}
-
 void event(const char *payload, size_t length){
   
 }
@@ -329,15 +205,6 @@ void robots(const char *payload, size_t length){
     String data_to_send;
     serializeJson(card_info,data_to_send);
     socket.emit("new_robots",string2char(data_to_send));
-}
-void OTGMessge(String info){
-    DynamicJsonDocument card_info(1024);
-    JsonArray array = card_info.to<JsonArray>();
-    JsonObject param1 = array.createNestedObject();
-    param1["received"] = info;
-    String data_to_send;
-    serializeJson(card_info,data_to_send);
-    socket.emit("newOTG",string2char(data_to_send));
 }
 
 void connecte(const char *payload, size_t length){
@@ -389,7 +256,7 @@ void playing(pathread bb){
 }
 
 void rotate(const char *payload, size_t length){
-  Kwbot.rotate(true);
+  Kwbot.hindukira(true);
 }
 
 void new_speed(const char *payload, size_t length){

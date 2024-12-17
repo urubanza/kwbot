@@ -236,7 +236,7 @@ float path::angleRad(int degs) {
 	return (degs * PI) / 180;
 }
 
-path path::rotate(bool left) {
+path path::hindukira(bool left) {
 	if (left) {
 		path::motor[0]->back(path::speed(), 10);
 		path::motor[1]->run(path::speed(), 10);

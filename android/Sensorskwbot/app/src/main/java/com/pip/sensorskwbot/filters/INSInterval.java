@@ -5,7 +5,7 @@ public class INSInterval {
     private double sensitivity;
 
     public static double MAGNETO_MAGNETIC_REFS_MIN = -24;
-    public static double MAGNETO_MAGNETIC_REFS_MAX = -22;
+    public static double MAGNETO_MAGNETIC_REFS_MAX = -19;
 
     public INSInterval(double sens){
         this.sensitivity = sens;

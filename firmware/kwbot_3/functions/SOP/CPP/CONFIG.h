@@ -42,7 +42,7 @@ const int socketPort = 8080;
 
  /// grobal variables for device identification for assigned building on it and this device_id in the 
  /// main server database according to the serial number assigned on this device
-const char *robot_serial = "00000328";
+const char *robot_serial = "00000327";
 unsigned long company_id = 0;
 unsigned long robot_id = 0;
 unsigned short int newDecice = 0;
